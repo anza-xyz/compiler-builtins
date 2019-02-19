@@ -157,44 +157,44 @@ macro_rules! intrinsics {
     // This will still define a function in this crate with the given name and
     // signature, but the actual symbol for the intrinsic may have a slightly
     // different ABI on win64.
-    (
-        #[win64_128bit_abi_hack]
-        $(#[$($attr:tt)*])*
-        pub extern $abi:tt fn $name:ident( $($argname:ident:  $ty:ty),* ) -> $ret:ty {
-            $($body:tt)*
-        }
+    // (
+    //     #[win64_128bit_abi_hack]
+    //     $(#[$($attr:tt)*])*
+    //     pub extern $abi:tt fn $name:ident( $($argname:ident:  $ty:ty),* ) -> $ret:ty {
+    //         $($body:tt)*
+    //     }
 
-        $($rest:tt)*
-    ) => (
-        #[cfg(all(windows, target_pointer_width = "64"))]
-        $(#[$($attr)*])*
-        pub extern $abi fn $name( $($argname: $ty),* ) -> $ret {
-            $($body)*
-        }
+    //     $($rest:tt)*
+    // ) => (
+    //     #[cfg(all(windows, target_pointer_width = "64"))]
+    //     $(#[$($attr)*])*
+    //     pub extern $abi fn $name( $($argname: $ty),* ) -> $ret {
+    //         $($body)*
+    //     }
 
-        #[cfg(all(windows, target_pointer_width = "64"))]
-        pub mod $name {
+    //     #[cfg(all(windows, target_pointer_width = "64"))]
+    //     pub mod $name {
 
-            intrinsics! {
-                pub extern $abi fn $name( $($argname: $ty),* )
-                    -> ::macros::win64_128bit_abi_hack::U64x2
-                {
-                    let e: $ret = super::$name($($argname),*);
-                    ::macros::win64_128bit_abi_hack::U64x2::from(e)
-                }
-            }
-        }
+    //         intrinsics! {
+    //             pub extern $abi fn $name( $($argname: $ty),* )
+    //                 -> ::macros::win64_128bit_abi_hack::U64x2
+    //             {
+    //                 let e: $ret = super::$name($($argname),*);
+    //                 ::macros::win64_128bit_abi_hack::U64x2::from(e)
+    //             }
+    //         }
+    //     }
 
-        #[cfg(not(all(windows, target_pointer_width = "64")))]
-        intrinsics! {
-            $(#[$($attr)*])*
-            pub extern $abi fn $name( $($argname: $ty),* ) -> $ret {
-                $($body)*
-            }
-        }
+    //     #[cfg(not(all(windows, target_pointer_width = "64")))]
+    //     intrinsics! {
+    //         $(#[$($attr)*])*
+    //         pub extern $abi fn $name( $($argname: $ty),* ) -> $ret {
+    //             $($body)*
+    //         }
+    //     }
 
-        intrinsics!($($rest)*);
-    );
+    //     intrinsics!($($rest)*);
+    // );
 
     // A bunch of intrinsics on ARM are aliased in the standard compiler-rt
     // build under `__aeabi_*` aliases, and LLVM will call these instead of the
@@ -261,37 +261,37 @@ macro_rules! intrinsics {
 
 // Hack for LLVM expectations for ABI on windows. This is used by the
 // `#[win64_128bit_abi_hack]` attribute recognized above
-#[cfg(all(windows, target_pointer_width="64"))]
-pub mod win64_128bit_abi_hack {
-    #[repr(simd)]
-    pub struct U64x2(u64, u64);
+// #[cfg(all(windows, target_pointer_width="64"))]
+// pub mod win64_128bit_abi_hack {
+//     #[repr(simd)]
+//     pub struct U64x2(u64, u64);
 
-    impl From<i128> for U64x2 {
-        fn from(i: i128) -> U64x2 {
-            use int::LargeInt;
-            let j = i as u128;
-            U64x2(j.low(), j.high())
-        }
-    }
+//     impl From<i128> for U64x2 {
+//         fn from(i: i128) -> U64x2 {
+//             use int::LargeInt;
+//             let j = i as u128;
+//             U64x2(j.low(), j.high())
+//         }
+//     }
 
-    impl From<u128> for U64x2 {
-        fn from(i: u128) -> U64x2 {
-            use int::LargeInt;
-            U64x2(i.low(), i.high())
-        }
-    }
-}
+//     impl From<u128> for U64x2 {
+//         fn from(i: u128) -> U64x2 {
+//             use int::LargeInt;
+//             U64x2(i.low(), i.high())
+//         }
+//     }
+// }
 
-macro_rules! u128_lang_items {
-    ($(
-        #[lang = $lang:tt]
-        pub fn $name:ident( $($argname:ident:  $ty:ty),* ) -> $ret:ty {
-            $($body:tt)*
-        }
-    )*) => ($(
-        #[cfg_attr(not(any(stage0, feature = "no-lang-items")), lang = $lang)]
-        pub fn $name( $($argname:  $ty),* ) -> $ret {
-            $($body)*
-        }
-    )*)
-}
+// macro_rules! u128_lang_items {
+//     ($(
+//         #[lang = $lang:tt]
+//         pub fn $name:ident( $($argname:ident:  $ty:ty),* ) -> $ret:ty {
+//             $($body:tt)*
+//         }
+//     )*) => ($(
+//         #[cfg_attr(not(any(stage0, feature = "no-lang-items")), lang = $lang)]
+//         pub fn $name( $($argname:  $ty),* ) -> $ret {
+//             $($body)*
+//         }
+//     )*)
+// }
