@@ -249,41 +249,41 @@ intrinsics! {
         rem
     }
 
-    #[win64_128bit_abi_hack]
-    /// Returns `n / d`
-    pub extern "C" fn __udivti3(n: u128, d: u128) -> u128 {
-        __udivmodti4(n, d, None)
-    }
+    // #[win64_128bit_abi_hack]
+    // /// Returns `n / d`
+    // pub extern "C" fn __udivti3(n: u128, d: u128) -> u128 {
+    //     __udivmodti4(n, d, None)
+    // }
 
-    #[win64_128bit_abi_hack]
-    /// Returns `n % d`
-    pub extern "C" fn __umodti3(n: u128, d: u128) -> u128 {
-        let mut rem = 0;
-        __udivmodti4(n, d, Some(&mut rem));
-        rem
-    }
+    // #[win64_128bit_abi_hack]
+    // /// Returns `n % d`
+    // pub extern "C" fn __umodti3(n: u128, d: u128) -> u128 {
+    //     let mut rem = 0;
+    //     __udivmodti4(n, d, Some(&mut rem));
+    //     rem
+    // }
 
     /// Returns `n / d` and sets `*rem = n % d`
     pub extern "C" fn __udivmoddi4(n: u64, d: u64, rem: Option<&mut u64>) -> u64 {
         udivmod_inner!(n, d, rem, u64)
     }
 
-    #[win64_128bit_abi_hack]
-    /// Returns `n / d` and sets `*rem = n % d`
-    pub extern "C" fn __udivmodti4(n: u128,
-                                   d: u128,
-                                   rem: Option<&mut u128>) -> u128 {
-        udivmod_inner!(n, d, rem, u128)
-    }
+    // #[win64_128bit_abi_hack]
+    // /// Returns `n / d` and sets `*rem = n % d`
+    // pub extern "C" fn __udivmodti4(n: u128,
+    //                                d: u128,
+    //                                rem: Option<&mut u128>) -> u128 {
+    //     udivmod_inner!(n, d, rem, u128)
+    // }
 }
 
-u128_lang_items! {
-    #[lang = "u128_div"]
-    pub fn rust_u128_div(a: u128, b: u128) -> u128 {
-        __udivti3(a, b)
-    }
-    #[lang = "u128_rem"]
-    pub fn rust_u128_rem(a: u128, b: u128) -> u128 {
-        __umodti3(a, b)
-    }
-}
+// u128_lang_items! {
+//     #[lang = "u128_div"]
+//     pub fn rust_u128_div(a: u128, b: u128) -> u128 {
+//         __udivti3(a, b)
+//     }
+//     #[lang = "u128_rem"]
+//     pub fn rust_u128_rem(a: u128, b: u128) -> u128 {
+//         __umodti3(a, b)
+//     }
+// }

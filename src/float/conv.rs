@@ -115,15 +115,15 @@ intrinsics! {
         }
     }
 
-    #[unadjusted_on_win64]
-    pub extern "C" fn __floattisf(i: i128) -> f32 {
-        int_to_float!(i, i128, f32)
-    }
+    // #[unadjusted_on_win64]
+    // pub extern "C" fn __floattisf(i: i128) -> f32 {
+    //     int_to_float!(i, i128, f32)
+    // }
 
-    #[unadjusted_on_win64]
-    pub extern "C" fn __floattidf(i: i128) -> f64 {
-        int_to_float!(i, i128, f64)
-    }
+    // #[unadjusted_on_win64]
+    // pub extern "C" fn __floattidf(i: i128) -> f64 {
+    //     int_to_float!(i, i128, f64)
+    // }
 
     #[arm_aeabi_alias = __aeabi_ui2f]
     pub extern "C" fn __floatunsisf(i: u32) -> f32 {
@@ -153,15 +153,15 @@ intrinsics! {
         int_to_float!(i, u64, f64)
     }
 
-    #[unadjusted_on_win64]
-    pub extern "C" fn __floatuntisf(i: u128) -> f32 {
-        int_to_float!(i, u128, f32)
-    }
+    // #[unadjusted_on_win64]
+    // pub extern "C" fn __floatuntisf(i: u128) -> f32 {
+    //     int_to_float!(i, u128, f32)
+    // }
 
-    #[unadjusted_on_win64]
-    pub extern "C" fn __floatuntidf(i: u128) -> f64 {
-        int_to_float!(i, u128, f64)
-    }
+    // #[unadjusted_on_win64]
+    // pub extern "C" fn __floatuntidf(i: u128) -> f64 {
+    //     int_to_float!(i, u128, f64)
+    // }
 }
 
 #[derive(PartialEq)]
@@ -245,10 +245,10 @@ intrinsics! {
         float_to_int!(f, f32, i64)
     }
 
-    #[unadjusted_on_win64]
-    pub extern "C" fn __fixsfti(f: f32) -> i128 {
-        float_to_int!(f, f32, i128)
-    }
+    // #[unadjusted_on_win64]
+    // pub extern "C" fn __fixsfti(f: f32) -> i128 {
+    //     float_to_int!(f, f32, i128)
+    // }
 
     #[arm_aeabi_alias = __aeabi_d2iz]
     pub extern "C" fn __fixdfsi(f: f64) -> i32 {
@@ -260,10 +260,10 @@ intrinsics! {
         float_to_int!(f, f64, i64)
     }
 
-    #[unadjusted_on_win64]
-    pub extern "C" fn __fixdfti(f: f64) -> i128 {
-        float_to_int!(f, f64, i128)
-    }
+    // #[unadjusted_on_win64]
+    // pub extern "C" fn __fixdfti(f: f64) -> i128 {
+    //     float_to_int!(f, f64, i128)
+    // }
 
     #[arm_aeabi_alias = __aeabi_f2uiz]
     pub extern "C" fn __fixunssfsi(f: f32) -> u32 {
@@ -275,10 +275,10 @@ intrinsics! {
         float_to_int!(f, f32, u64)
     }
 
-    #[unadjusted_on_win64]
-    pub extern "C" fn __fixunssfti(f: f32) -> u128 {
-        float_to_int!(f, f32, u128)
-    }
+    // #[unadjusted_on_win64]
+    // pub extern "C" fn __fixunssfti(f: f32) -> u128 {
+    //     float_to_int!(f, f32, u128)
+    // }
 
     #[arm_aeabi_alias = __aeabi_d2uiz]
     pub extern "C" fn __fixunsdfsi(f: f64) -> u32 {
@@ -290,8 +290,8 @@ intrinsics! {
         float_to_int!(f, f64, u64)
     }
 
-    #[unadjusted_on_win64]
-    pub extern "C" fn __fixunsdfti(f: f64) -> u128 {
-        float_to_int!(f, f64, u128)
-    }
+    // #[unadjusted_on_win64]
+    // pub extern "C" fn __fixunsdfti(f: f64) -> u128 {
+    //     float_to_int!(f, f64, u128)
+    // }
 }

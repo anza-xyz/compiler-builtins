@@ -20,7 +20,7 @@ trait Div: Int {
 
 impl Div for i32 {}
 impl Div for i64 {}
-impl Div for i128 {}
+// impl Div for i128 {}
 
 trait Mod: Int {
     /// Returns `a % b`
@@ -38,7 +38,7 @@ trait Mod: Int {
 
 impl Mod for i32 {}
 impl Mod for i64 {}
-impl Mod for i128 {}
+// impl Mod for i128 {}
 
 trait Divmod: Int {
     /// Returns `a / b` and sets `*rem = n % d`
@@ -69,10 +69,10 @@ intrinsics! {
         a.div(b)
     }
 
-    #[win64_128bit_abi_hack]
-    pub extern "C" fn __divti3(a: i128, b: i128) -> i128 {
-        a.div(b)
-    }
+    // #[win64_128bit_abi_hack]
+    // pub extern "C" fn __divti3(a: i128, b: i128) -> i128 {
+    //     a.div(b)
+    // }
 
     #[use_c_shim_if(all(target_arch = "arm",
                     not(target_os = "ios"),
@@ -87,10 +87,10 @@ intrinsics! {
         a.mod_(b)
     }
 
-    #[win64_128bit_abi_hack]
-    pub extern "C" fn __modti3(a: i128, b: i128) -> i128 {
-        a.mod_(b)
-    }
+    // #[win64_128bit_abi_hack]
+    // pub extern "C" fn __modti3(a: i128, b: i128) -> i128 {
+    //     a.mod_(b)
+    // }
 
     #[use_c_shim_if(all(target_arch = "arm", not(target_env = "msvc"),
                     not(target_os = "ios"), not(thumb_1)))]
@@ -104,13 +104,13 @@ intrinsics! {
     }
 }
 
-u128_lang_items! {
-    #[lang = "i128_div"]
-    pub fn rust_i128_div(a: i128, b: i128) -> i128 {
-        __divti3(a, b)
-    }
-    #[lang = "i128_rem"]
-    pub fn rust_i128_rem(a: i128, b: i128) -> i128 {
-        __modti3(a, b)
-    }
-}
+// u128_lang_items! {
+//     #[lang = "i128_div"]
+//     pub fn rust_i128_div(a: i128, b: i128) -> i128 {
+//         __divti3(a, b)
+//     }
+//     #[lang = "i128_rem"]
+//     pub fn rust_i128_rem(a: i128, b: i128) -> i128 {
+//         __modti3(a, b)
+//     }
+// }
