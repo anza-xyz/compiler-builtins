@@ -30,9 +30,12 @@
 #[cfg(test)]
 extern crate core;
 
-#[allow(unused_unsafe)]
+extern "C" {
+    fn myabort() -> !;
+}
+
 fn abort() -> ! {
-    unsafe { core::intrinsics::abort() }
+    unsafe { /*core::intrinsics::abort()*/ myabort() }
 }
 
 #[macro_use]

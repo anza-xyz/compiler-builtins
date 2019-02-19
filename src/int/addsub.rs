@@ -27,7 +27,7 @@ trait UAddSub: LargeInt {
     }
 }
 
-impl UAddSub for u128 {}
+// impl UAddSub for u128 {}
 
 trait AddSub: Int
 where
@@ -41,8 +41,8 @@ where
     }
 }
 
-impl AddSub for u128 {}
-impl AddSub for i128 {}
+// impl AddSub for u128 {}
+// impl AddSub for i128 {}
 
 trait Addo: AddSub
 where
@@ -64,8 +64,8 @@ where
     }
 }
 
-impl Addo for i128 {}
-impl Addo for u128 {}
+// impl Addo for i128 {}
+// impl Addo for u128 {}
 
 trait Subo: AddSub
 where
@@ -87,48 +87,48 @@ where
     }
 }
 
-impl Subo for i128 {}
-impl Subo for u128 {}
+// impl Subo for i128 {}
+// impl Subo for u128 {}
 
-intrinsics! {
-    pub extern "C" fn __rust_i128_add(a: i128, b: i128) -> i128 {
-        __rust_u128_add(a as _, b as _) as _
-    }
+// intrinsics! {
+//     pub extern "C" fn __rust_i128_add(a: i128, b: i128) -> i128 {
+//         __rust_u128_add(a as _, b as _) as _
+//     }
 
-    pub extern "C" fn __rust_i128_addo(a: i128, b: i128) -> (i128, bool) {
-        let mut oflow = 0;
-        let r = a.addo(b, &mut oflow);
-        (r, oflow != 0)
-    }
+//     pub extern "C" fn __rust_i128_addo(a: i128, b: i128) -> (i128, bool) {
+//         let mut oflow = 0;
+//         let r = a.addo(b, &mut oflow);
+//         (r, oflow != 0)
+//     }
 
-    pub extern "C" fn __rust_u128_add(a: u128, b: u128) -> u128 {
-        a.add(b)
-    }
+//     pub extern "C" fn __rust_u128_add(a: u128, b: u128) -> u128 {
+//         a.add(b)
+//     }
 
-    pub extern "C" fn __rust_u128_addo(a: u128, b: u128) -> (u128, bool) {
-        let mut oflow = 0;
-        let r = a.addo(b, &mut oflow);
-        (r, oflow != 0)
-    }
+//     pub extern "C" fn __rust_u128_addo(a: u128, b: u128) -> (u128, bool) {
+//         let mut oflow = 0;
+//         let r = a.addo(b, &mut oflow);
+//         (r, oflow != 0)
+//     }
 
 
-    pub extern "C" fn __rust_i128_sub(a: i128, b: i128) -> i128 {
-        __rust_u128_sub(a as _, b as _) as _
-    }
+//     pub extern "C" fn __rust_i128_sub(a: i128, b: i128) -> i128 {
+//         __rust_u128_sub(a as _, b as _) as _
+//     }
 
-    pub extern "C" fn __rust_i128_subo(a: i128, b: i128) -> (i128, bool) {
-        let mut oflow = 0;
-        let r = a.subo(b, &mut oflow);
-        (r, oflow != 0)
-    }
+//     pub extern "C" fn __rust_i128_subo(a: i128, b: i128) -> (i128, bool) {
+//         let mut oflow = 0;
+//         let r = a.subo(b, &mut oflow);
+//         (r, oflow != 0)
+//     }
 
-    pub extern "C" fn __rust_u128_sub(a: u128, b: u128) -> u128 {
-        a.sub(b)
-    }
+//     pub extern "C" fn __rust_u128_sub(a: u128, b: u128) -> u128 {
+//         a.sub(b)
+//     }
 
-    pub extern "C" fn __rust_u128_subo(a: u128, b: u128) -> (u128, bool) {
-        let mut oflow = 0;
-        let r = a.subo(b, &mut oflow);
-        (r, oflow != 0)
-    }
-}
+//     pub extern "C" fn __rust_u128_subo(a: u128, b: u128) -> (u128, bool) {
+//         let mut oflow = 0;
+//         let r = a.subo(b, &mut oflow);
+//         (r, oflow != 0)
+//     }
+// }

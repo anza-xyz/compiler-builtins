@@ -79,12 +79,12 @@ pub(crate) trait Int:
     fn leading_zeros(self) -> u32;
 }
 
-fn unwrap<T>(t: Option<T>) -> T {
-    match t {
-        Some(t) => t,
-        None => ::abort(),
-    }
-}
+// fn unwrap<T>(t: Option<T>) -> T {
+//     match t {
+//         Some(t) => t,
+//         None => ::abort(),
+//     }
+// }
 
 macro_rules! int_impl_common {
     ($ty:ty, $bits:expr) => {
@@ -126,11 +126,11 @@ macro_rules! int_impl_common {
         }
 
         fn aborting_div(self, other: Self) -> Self {
-            unwrap(<Self>::checked_div(self, other))
+            // unwrap(<Self>::checked_div(self, other)) // TODO 
         }
 
         fn aborting_rem(self, other: Self) -> Self {
-            unwrap(<Self>::checked_rem(self, other))
+             // unwrap(<Self>::checked_rem(self, other)) // TODO 
         }
 
         fn leading_zeros(self) -> u32 {
@@ -187,7 +187,7 @@ macro_rules! int_impl {
 
 int_impl!(i32, u32, 32);
 int_impl!(i64, u64, 64);
-int_impl!(i128, u128, 128);
+// int_impl!(i128, u128, 128);
 
 /// Trait to convert an integer to/from smaller parts
 pub(crate) trait LargeInt: Int {
@@ -228,8 +228,8 @@ macro_rules! large_int {
 
 large_int!(u64, u32, u32, 32);
 large_int!(i64, u32, i32, 32);
-large_int!(u128, u64, u64, 64);
-large_int!(i128, u64, i64, 64);
+// large_int!(u128, u64, u64, 64);
+// large_int!(i128, u64, i64, 64);
 
 /// Trait to express (possibly lossy) casting of integers
 pub(crate) trait CastInto<T: Copy>: Copy {
@@ -238,7 +238,7 @@ pub(crate) trait CastInto<T: Copy>: Copy {
 
 macro_rules! cast_into {
     ($ty:ty) => {
-        cast_into!($ty; usize, isize, u32, i32, u64, i64, u128, i128);
+        cast_into!($ty; usize, isize, u32, i32, u64, i64);
     };
     ($ty:ty; $($into:ty),*) => {$(
         impl CastInto<$into> for $ty {
@@ -253,8 +253,8 @@ cast_into!(u32);
 cast_into!(i32);
 cast_into!(u64);
 cast_into!(i64);
-cast_into!(u128);
-cast_into!(i128);
+// cast_into!(u128);
+// cast_into!(i128);
 
 pub(crate) trait WideInt: Int {
     type Output: Int;
@@ -271,7 +271,8 @@ macro_rules! impl_wide_int {
 
             fn wide_mul(self, other: Self) -> (Self, Self) {
                 let product = (self as $tywide).wrapping_mul(other as $tywide);
-                ((product >> ($bits as $ty)) as $ty, product as $ty)
+                //((product >> ($bits as $ty)) as $ty, product as $ty) // TODO overflow
+                (product as $ty, product as $ty)
             }
 
             fn wide_shift_left(&mut self, low: &mut Self, count: i32) {
@@ -299,7 +300,7 @@ macro_rules! impl_wide_int {
 }
 
 impl_wide_int!(u32, u64, 32);
-impl_wide_int!(u64, u128, 64);
+impl_wide_int!(u64, u64, 64); // TODO this should be u128 so multiple would not overflow?
 
 intrinsics! {
     #[maybe_use_optimized_c_shim]

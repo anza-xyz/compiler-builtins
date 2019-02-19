@@ -149,49 +149,49 @@ macro_rules! intrinsics {
         intrinsics!($($rest)*);
     );
 
-    // Some intrinsics on win64 which return a 128-bit integer have an.. unusual
-    // calling convention. That's managed here with this "abi hack" which alters
-    // the generated symbol's ABI.
-    //
-    // This will still define a function in this crate with the given name and
-    // signature, but the actual symbol for the intrinsic may have a slightly
-    // different ABI on win64.
-    (
-        #[win64_128bit_abi_hack]
-        $(#[$($attr:tt)*])*
-        pub extern $abi:tt fn $name:ident( $($argname:ident:  $ty:ty),* ) -> $ret:ty {
-            $($body:tt)*
-        }
+    // // Some intrinsics on win64 which return a 128-bit integer have an.. unusual
+    // // calling convention. That's managed here with this "abi hack" which alters
+    // // the generated symbol's ABI.
+    // //
+    // // This will still define a function in this crate with the given name and
+    // // signature, but the actual symbol for the intrinsic may have a slightly
+    // // different ABI on win64.
+    // (
+    //     #[win64_128bit_abi_hack]
+    //     $(#[$($attr:tt)*])*
+    //     pub extern $abi:tt fn $name:ident( $($argname:ident:  $ty:ty),* ) -> $ret:ty {
+    //         $($body:tt)*
+    //     }
 
-        $($rest:tt)*
-    ) => (
-        #[cfg(all(windows, target_arch = "x86_64"))]
-        $(#[$($attr)*])*
-        pub extern $abi fn $name( $($argname: $ty),* ) -> $ret {
-            $($body)*
-        }
+    //     $($rest:tt)*
+    // ) => (
+    //     #[cfg(all(windows, target_arch = "x86_64"))]
+    //     $(#[$($attr)*])*
+    //     pub extern $abi fn $name( $($argname: $ty),* ) -> $ret {
+    //         $($body)*
+    //     }
 
-        #[cfg(all(windows, target_arch = "x86_64"))]
-        pub mod $name {
-            #[cfg_attr(not(feature = "mangled-names"), no_mangle)]
-            pub extern $abi fn $name( $($argname: $ty),* )
-                -> ::macros::win64_128bit_abi_hack::U64x2
-            {
-                let e: $ret = super::$name($($argname),*);
-                ::macros::win64_128bit_abi_hack::U64x2::from(e)
-            }
-        }
+    //     #[cfg(all(windows, target_arch = "x86_64"))]
+    //     pub mod $name {
+    //         #[cfg_attr(not(feature = "mangled-names"), no_mangle)]
+    //         pub extern $abi fn $name( $($argname: $ty),* )
+    //             -> ::macros::win64_128bit_abi_hack::U64x2
+    //         {
+    //             let e: $ret = super::$name($($argname),*);
+    //             ::macros::win64_128bit_abi_hack::U64x2::from(e)
+    //         }
+    //     }
 
-        #[cfg(not(all(windows, target_arch = "x86_64")))]
-        intrinsics! {
-            $(#[$($attr)*])*
-            pub extern $abi fn $name( $($argname: $ty),* ) -> $ret {
-                $($body)*
-            }
-        }
+    //     #[cfg(not(all(windows, target_arch = "x86_64")))]
+    //     intrinsics! {
+    //         $(#[$($attr)*])*
+    //         pub extern $abi fn $name( $($argname: $ty),* ) -> $ret {
+    //             $($body)*
+    //         }
+    //     }
 
-        intrinsics!($($rest)*);
-    );
+    //     intrinsics!($($rest)*);
+    // );
 
     // A bunch of intrinsics on ARM are aliased in the standard compiler-rt
     // build under `__aeabi_*` aliases, and LLVM will call these instead of the
