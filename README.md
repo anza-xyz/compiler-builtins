@@ -1,3 +1,9 @@
+# Fork of the Rust Programming Language's compiler-builtins library
+
+Used by [rust-bpf-sysroot](https://github.com/solana-labs/rust-bpf-sysroot)
+
+---
+
 # `compiler-builtins`
 
 [![Build status](https://ci.appveyor.com/api/projects/status/eusnjps5ui3d305p?svg=true)](https://ci.appveyor.com/project/rust-lang-libs/compiler-builtins)
