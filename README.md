@@ -1,3 +1,9 @@
+# Fork of the Rust Programming Language's compiler-builtins library
+
+Used by [rust-bpf-sysroot](https://github.com/solana-labs/rust-bpf-sysroot)
+
+---
+
 # `compiler-builtins`
 
 [![Build Status](https://dev.azure.com/rust-lang/compiler-builtins/_apis/build/status/rust-lang-nursery.compiler-builtins?branchName=master)](https://dev.azure.com/rust-lang/compiler-builtins/_build/latest?definitionId=6&branchName=master)
