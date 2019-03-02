@@ -1,3 +1,9 @@
+# Fork of the Rust Programming Language's compiler-builtins library
+
+Used by [rust-bpf-sysroot](https://github.com/solana-labs/rust-bpf-sysroot)
+
+---
+
 # `compiler-builtins`
 
 > Porting `compiler-rt` intrinsics to Rust
