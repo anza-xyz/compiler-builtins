@@ -411,6 +411,60 @@ mod c {
             sources.remove(&["__aeabi_cdcmp", "__aeabi_cfcmp"]);
         }
 
+        if target_arch == "bpf" {
+            // Add the 128 bit implementations needed
+            sources.extend(&[
+                "ashlti3.c",
+                "ashrti3.c",
+                "divti3.c",
+                "fixdfti.c",
+                "fixsfti.c",
+                "fixunsdfti.c",
+                "fixunssfti.c",
+                "floattidf.c",
+                "floattisf.c",
+                "floatuntidf.c",
+                "floatuntisf.c",
+                "lshrti3.c",
+                "modti3.c",
+                "muloti4.c",
+                "multi3.c",
+                "udivti3.c",
+                "udivmodti4.c",
+                "umodti3.c",
+            ]);
+
+            // Remove the implementations that are not compatible or
+            // fail to build.  This list should shrink to zero
+            sources.remove(&[
+                "divdc3",
+                "divsc3",
+                "divxc3",
+                "int_util",
+                "muldc3",
+                "mulsc3",
+                "mulvdi3",
+                "mulvsi3",
+                "mulxc3",
+                "powixf2",
+                "divti3",
+                "fixdfti",
+                "fixsfti",
+                "fixunsdfti",
+                "fixunssfti",
+                "floattidf",
+                "floattisf",
+                "floatuntidf",
+                "floatuntisf",
+                "modti3",
+                "muloti4",
+                "udivti3",
+                "udivmodti4",
+                "umodti3",
+                "mulvti3",
+            ]);
+        }
+
         // When compiling the C code we require the user to tell us where the
         // source code is, and this is largely done so when we're compiling as
         // part of rust-lang/rust we can use the same llvm-project repository as
@@ -431,6 +485,6 @@ mod c {
             println!("cargo:rustc-cfg={}=\"optimized-c\"", sym);
         }
 
-        cfg.compile("libcompiler-rt.a");
+        cfg.compile("compiler-rt");
     }
 }
