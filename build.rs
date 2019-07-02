@@ -440,7 +440,7 @@ mod c {
         }
 
         if target_arch == "bpf" {
-            // Add the 128 bit implementations needed
+            // Add the 128 bit implementations
             sources.extend(&[
                 "ashlti3.c",
                 "ashrti3.c",
@@ -462,34 +462,24 @@ mod c {
                 "umodti3.c",
             ]);
 
-            // Remove the implementations that are not compatible or
-            // fail to build.  This list should shrink to zero
+            // Add any other missing builtins
+            sources.extend(&[
+                "floatundidf.c",
+                "floatundisf.c",
+            ]);
+
+            // Remove the implementations that fail to build.
+            // This list should shrink to zero
             sources.remove(&[
-                "divdc3",
-                "divsc3",
-                "divxc3",
-                "int_util",
-                "muldc3",
-                "mulsc3",
-                "mulvdi3",
-                "mulvsi3",
-                "mulxc3",
-                "powixf2",
-                "divti3",
-                "fixdfti",
-                "fixsfti",
-                "fixunsdfti",
-                "fixunssfti",
-                "floattidf",
-                "floattisf",
-                "floatuntidf",
-                "floatuntisf",
-                "modti3",
-                "muloti4",
-                "udivti3",
-                "udivmodti4",
-                "umodti3",
-                "mulvti3",
+                "int_util",  // Unsupported architecture error
+                "mulvdi3", // Unsupported signed division
+                "mulvsi3", // Unsupported signed division
+                "divti3", // Issue #3099
+                "modti3", // Issue #3099
+                "muloti4", // Issue #3099
+                "udivti3", // Issue #3099
+                "udivmodti4", // Issue #3099
+                "umodti3", // Issue #3099
             ]);
         }
 
