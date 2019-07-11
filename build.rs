@@ -474,12 +474,6 @@ mod c {
                 "int_util",  // Unsupported architecture error
                 "mulvdi3", // Unsupported signed division
                 "mulvsi3", // Unsupported signed division
-                "divti3", // Issue #3099
-                "modti3", // Issue #3099
-                "muloti4", // Issue #3099
-                "udivti3", // Issue #3099
-                "udivmodti4", // Issue #3099
-                "umodti3", // Issue #3099
             ]);
         }
 
