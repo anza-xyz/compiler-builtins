@@ -27,7 +27,7 @@ trait UAddSub: LargeInt {
     }
 }
 
-// impl UAddSub for u128 {}
+impl UAddSub for u128 {}
 
 trait AddSub: Int
 where
@@ -41,8 +41,8 @@ where
     }
 }
 
-// impl AddSub for u128 {}
-// impl AddSub for i128 {}
+impl AddSub for u128 {}
+impl AddSub for i128 {}
 
 trait Addo: AddSub
 where
@@ -64,8 +64,8 @@ where
     }
 }
 
-// impl Addo for i128 {}
-// impl Addo for u128 {}
+impl Addo for i128 {}
+impl Addo for u128 {}
 
 trait Subo: AddSub
 where
@@ -87,8 +87,8 @@ where
     }
 }
 
-// impl Subo for i128 {}
-// impl Subo for u128 {}
+impl Subo for i128 {}
+impl Subo for u128 {}
 
 // intrinsics! {
 //     pub extern "C" fn __rust_i128_add(a: i128, b: i128) -> i128 {

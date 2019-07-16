@@ -81,7 +81,7 @@ trait UMulo: Int {
         result
     }
 }
-// impl UMulo for u128 {}
+impl UMulo for u128 {}
 
 intrinsics! {
     #[maybe_use_optimized_c_shim]
@@ -95,14 +95,12 @@ intrinsics! {
     //     a.mul(b)
     // }
 
-    pub extern "C" fn __mulosi4(_a: i32, _b: i32, _oflow: &mut i32) -> i32 {
-        // a.mulo(b, oflow) // TODO
-        0
+    pub extern "C" fn __mulosi4(a: i32, b: i32, oflow: &mut i32) -> i32 {
+        a.mulo(b, oflow)
     }
 
-    pub extern "C" fn __mulodi4(_a: i64, _b: i64, _oflow: &mut i32) -> i64 {
-        //a.mulo(b, oflow) // TODO
-        0
+    pub extern "C" fn __mulodi4(a: i64, b: i64, oflow: &mut i32) -> i64 {
+        a.mulo(b, oflow)
     }
 
     // #[unadjusted_on_win64]

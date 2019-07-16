@@ -21,7 +21,7 @@ trait Ashl: Int + LargeInt {
 }
 
 impl Ashl for u64 {}
-// impl Ashl for u128 {}
+impl Ashl for u128 {}
 
 trait Ashr: Int + LargeInt {
     /// Returns arithmetic `a >> b`, requires `b < Self::BITS`
@@ -71,7 +71,7 @@ trait Lshr: Int + LargeInt {
 }
 
 impl Lshr for u64 {}
-// impl Lshr for u128 {}
+impl Lshr for u128 {}
 
 intrinsics! {
     #[maybe_use_optimized_c_shim]
@@ -80,9 +80,9 @@ intrinsics! {
         a.ashl(b)
     }
 
-    // pub extern "C" fn __ashlti3(a: u128, b: u32) -> u128 {
-    //     a.ashl(b)
-    // }
+    pub extern "C" fn __ashlti3(a: u128, b: u32) -> u128 {
+        a.ashl(b)
+    }
 
     #[maybe_use_optimized_c_shim]
     #[arm_aeabi_alias = __aeabi_lasr]
