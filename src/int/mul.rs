@@ -80,7 +80,7 @@ trait UMulo : Int {
         result
     }
 }
-// impl UMulo for u128 {}
+impl UMulo for u128 {}
 
 intrinsics! {
     #[use_c_shim_if(all(target_arch = "x86", not(target_env = "msvc")))]
@@ -94,14 +94,12 @@ intrinsics! {
     //     a.mul(b)
     // }
 
-    pub extern "C" fn __mulosi4(_a: i32, _b: i32, _oflow: &mut i32) -> i32 {
-        // a.mulo(b, oflow) // TODO
-        0
+    pub extern "C" fn __mulosi4(a: i32, b: i32, oflow: &mut i32) -> i32 {
+        a.mulo(b, oflow)
     }
 
-    pub extern "C" fn __mulodi4(_a: i64, _b: i64, _oflow: &mut i32) -> i64 {
-        //a.mulo(b, oflow) // TODO
-        0
+    pub extern "C" fn __mulodi4(a: i64, b: i64, oflow: &mut i32) -> i64 {
+        a.mulo(b, oflow)
     }
 
     // #[unadjusted_on_win64]
@@ -110,25 +108,25 @@ intrinsics! {
     // }
 }
 
-// u128_lang_items! {
-//     #[lang = "i128_mul"]
-//     pub fn rust_i128_mul(a: i128, b: i128) -> i128 {
-//         __multi3(a, b)
-//     }
-//     #[lang = "i128_mulo"]
-//     pub fn rust_i128_mulo(a: i128, b: i128) -> (i128, bool) {
-//         let mut oflow = 0;
-//         let r = __muloti4(a, b, &mut oflow);
-//         (r, oflow != 0)
-//     }
-//     #[lang = "u128_mul"]
-//     pub fn rust_u128_mul(a: u128, b: u128) -> u128 {
-//         __multi3(a as _, b as _) as _
-//     }
-//     #[lang = "u128_mulo"]
-//     pub fn rust_u128_mulo(a: u128, b: u128) -> (u128, bool) {
-//         let mut oflow = 0;
-//         let r = a.mulo(b, &mut oflow);
-//         (r, oflow != 0)
-//     }
-// }
+u128_lang_items! {
+    // #[lang = "i128_mul"]
+    // pub fn rust_i128_mul(a: i128, b: i128) -> i128 {
+    //     __multi3(a, b)
+    // }
+    // #[lang = "i128_mulo"]
+    // pub fn rust_i128_mulo(a: i128, b: i128) -> (i128, bool) {
+    //     let mut oflow = 0;
+    //     let r = __muloti4(a, b, &mut oflow);
+    //     (r, oflow != 0)
+    // }
+    // #[lang = "u128_mul"]
+    // pub fn rust_u128_mul(a: u128, b: u128) -> u128 {
+    //     __multi3(a as _, b as _) as _
+    // }
+     #[lang = "u128_mulo"]
+    pub fn rust_u128_mulo(a: u128, b: u128) -> (u128, bool) {
+        let mut oflow = 0;
+        let r = a.mulo(b, &mut oflow);
+        (r, oflow != 0)
+    }
+}

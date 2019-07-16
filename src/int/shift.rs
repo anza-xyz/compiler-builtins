@@ -19,7 +19,7 @@ trait Ashl: Int + LargeInt {
 }
 
 impl Ashl for u64 {}
-// impl Ashl for u128 {}
+impl Ashl for u128 {}
 
 trait Ashr: Int + LargeInt {
     /// Returns arithmetic `a >> b`, requires `b < Self::BITS`
@@ -62,7 +62,7 @@ trait Lshr: Int + LargeInt {
 }
 
 impl Lshr for u64 {}
-// impl Lshr for u128 {}
+impl Lshr for u128 {}
 
 intrinsics! {
     #[use_c_shim_if(all(target_arch = "x86", not(target_env = "msvc")))]
@@ -71,9 +71,9 @@ intrinsics! {
         a.ashl(b)
     }
 
-    // pub extern "C" fn __ashlti3(a: u128, b: u32) -> u128 {
-    //     a.ashl(b)
-    // }
+    pub extern "C" fn __ashlti3(a: u128, b: u32) -> u128 {
+        a.ashl(b)
+    }
 
     #[use_c_shim_if(all(target_arch = "x86", not(target_env = "msvc")))]
     #[arm_aeabi_alias = __aeabi_lasr]
@@ -91,43 +91,43 @@ intrinsics! {
         a.lshr(b)
     }
 
-    // pub extern "C" fn __lshrti3(a: u128, b: u32) -> u128 {
-    //     a.lshr(b)
-    // }
+    pub extern "C" fn __lshrti3(a: u128, b: u32) -> u128 {
+        a.lshr(b)
+    }
 }
 
-// u128_lang_items! {
-//     #[lang = "i128_shl"]
-//     pub fn rust_i128_shl(a: i128, b: u32) -> i128 {
-//         __ashlti3(a as _, b) as _
-//     }
-//     #[lang = "i128_shlo"]
-//     pub fn rust_i128_shlo(a: i128, b: u128) -> (i128, bool) {
-//         (rust_i128_shl(a, b as _), b >= 128)
-//     }
-//     #[lang = "u128_shl"]
-//     pub fn rust_u128_shl(a: u128, b: u32) -> u128 {
-//         __ashlti3(a, b)
-//     }
-//     #[lang = "u128_shlo"]
-//     pub fn rust_u128_shlo(a: u128, b: u128) -> (u128, bool) {
-//         (rust_u128_shl(a, b as _), b >= 128)
-//     }
+u128_lang_items! {
+    #[lang = "i128_shl"]
+    pub fn rust_i128_shl(a: i128, b: u32) -> i128 {
+        __ashlti3(a as _, b) as _
+    }
+    #[lang = "i128_shlo"]
+    pub fn rust_i128_shlo(a: i128, b: u128) -> (i128, bool) {
+        (rust_i128_shl(a, b as _), b >= 128)
+    }
+    #[lang = "u128_shl"]
+    pub fn rust_u128_shl(a: u128, b: u32) -> u128 {
+        __ashlti3(a, b)
+    }
+    #[lang = "u128_shlo"]
+    pub fn rust_u128_shlo(a: u128, b: u128) -> (u128, bool) {
+        (rust_u128_shl(a, b as _), b >= 128)
+    }
 
-//     #[lang = "i128_shr"]
-//     pub fn rust_i128_shr(a: i128, b: u32) -> i128 {
-//         __ashrti3(a, b)
-//     }
-//     #[lang = "i128_shro"]
-//     pub fn rust_i128_shro(a: i128, b: u128) -> (i128, bool) {
-//         (rust_i128_shr(a, b as _), b >= 128)
-//     }
-//     #[lang = "u128_shr"]
-//     pub fn rust_u128_shr(a: u128, b: u32) -> u128 {
-//         __lshrti3(a, b)
-//     }
-//     #[lang = "u128_shro"]
-//     pub fn rust_u128_shro(a: u128, b: u128) -> (u128, bool) {
-//         (rust_u128_shr(a, b as _), b >= 128)
-//     }
-// }
+    // #[lang = "i128_shr"]
+    // pub fn rust_i128_shr(a: i128, b: u32) -> i128 {
+    //     __ashrti3(a, b)
+    // }
+    // #[lang = "i128_shro"]
+    // pub fn rust_i128_shro(a: i128, b: u128) -> (i128, bool) {
+    //     (rust_i128_shr(a, b as _), b >= 128)
+    // }
+    #[lang = "u128_shr"]
+    pub fn rust_u128_shr(a: u128, b: u32) -> u128 {
+        __lshrti3(a, b)
+    }
+    #[lang = "u128_shro"]
+    pub fn rust_u128_shro(a: u128, b: u128) -> (u128, bool) {
+        (rust_u128_shr(a, b as _), b >= 128)
+    }
+}

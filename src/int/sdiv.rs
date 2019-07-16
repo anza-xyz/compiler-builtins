@@ -38,7 +38,7 @@ trait Mod: Int {
 
 impl Mod for i32 {}
 impl Mod for i64 {}
-// impl Mod for i128 {}
+impl Mod for i128 {}
 
 trait Divmod: Int {
     /// Returns `a / b` and sets `*rem = n % d`
@@ -85,10 +85,10 @@ intrinsics! {
         a.mod_(b)
     }
 
-    // #[win64_128bit_abi_hack]
-    // pub extern "C" fn __modti3(a: i128, b: i128) -> i128 {
-    //     a.mod_(b)
-    // }
+    #[win64_128bit_abi_hack]
+    pub extern "C" fn __modti3(a: i128, b: i128) -> i128 {
+        a.mod_(b)
+    }
 
     #[use_c_shim_if(all(target_arch = "arm", not(target_env = "msvc"),
                     not(target_os = "ios"), not(thumbv6m)))]

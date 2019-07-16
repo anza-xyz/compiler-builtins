@@ -19,7 +19,7 @@ trait UAddSub: LargeInt {
     }
 }
 
-// impl UAddSub for u128 {}
+impl UAddSub for u128 {}
 
 trait AddSub: Int
     where <Self as Int>::UnsignedInt: UAddSub
@@ -32,8 +32,8 @@ trait AddSub: Int
     }
 }
 
-// impl AddSub for u128 {}
-// impl AddSub for i128 {}
+impl AddSub for u128 {}
+impl AddSub for i128 {}
 
 trait Addo: AddSub
     where <Self as Int>::UnsignedInt: UAddSub
@@ -54,8 +54,8 @@ trait Addo: AddSub
     }
 }
 
-// impl Addo for i128 {}
-// impl Addo for u128 {}
+impl Addo for i128 {}
+impl Addo for u128 {}
 
 trait Subo: AddSub
     where <Self as Int>::UnsignedInt: UAddSub
@@ -76,49 +76,49 @@ trait Subo: AddSub
     }
 }
 
-// impl Subo for i128 {}
-// impl Subo for u128 {}
+impl Subo for i128 {}
+impl Subo for u128 {}
 
-// u128_lang_items! {
-//     #[lang = "i128_add"]
-//     pub fn rust_i128_add(a: i128, b: i128) -> i128 {
-//         rust_u128_add(a as _, b as _) as _
-//     }
-//     #[lang = "i128_addo"]
-//     pub fn rust_i128_addo(a: i128, b: i128) -> (i128, bool) {
-//         let mut oflow = 0;
-//         let r = a.addo(b, &mut oflow);
-//         (r, oflow != 0)
-//     }
-//     #[lang = "u128_add"]
-//     pub fn rust_u128_add(a: u128, b: u128) -> u128 {
-//         a.add(b)
-//     }
-//     #[lang = "u128_addo"]
-//     pub fn rust_u128_addo(a: u128, b: u128) -> (u128, bool) {
-//         let mut oflow = 0;
-//         let r = a.addo(b, &mut oflow);
-//         (r, oflow != 0)
-//     }
+u128_lang_items! {
+    #[lang = "i128_add"]
+    pub fn rust_i128_add(a: i128, b: i128) -> i128 {
+        rust_u128_add(a as _, b as _) as _
+    }
+    #[lang = "i128_addo"]
+    pub fn rust_i128_addo(a: i128, b: i128) -> (i128, bool) {
+        let mut oflow = 0;
+        let r = a.addo(b, &mut oflow);
+        (r, oflow != 0)
+    }
+    #[lang = "u128_add"]
+    pub fn rust_u128_add(a: u128, b: u128) -> u128 {
+        a.add(b)
+    }
+    #[lang = "u128_addo"]
+    pub fn rust_u128_addo(a: u128, b: u128) -> (u128, bool) {
+        let mut oflow = 0;
+        let r = a.addo(b, &mut oflow);
+        (r, oflow != 0)
+    }
 
-//     #[lang = "i128_sub"]
-//     pub fn rust_i128_sub(a: i128, b: i128) -> i128 {
-//         rust_u128_sub(a as _, b as _) as _
-//     }
-//     #[lang = "i128_subo"]
-//     pub fn rust_i128_subo(a: i128, b: i128) -> (i128, bool) {
-//         let mut oflow = 0;
-//         let r = a.subo(b, &mut oflow);
-//         (r, oflow != 0)
-//     }
-//     #[lang = "u128_sub"]
-//     pub fn rust_u128_sub(a: u128, b: u128) -> u128 {
-//         a.sub(b)
-//     }
-//     #[lang = "u128_subo"]
-//     pub fn rust_u128_subo(a: u128, b: u128) -> (u128, bool) {
-//         let mut oflow = 0;
-//         let r = a.subo(b, &mut oflow);
-//         (r, oflow != 0)
-//     }
-// }
+    #[lang = "i128_sub"]
+    pub fn rust_i128_sub(a: i128, b: i128) -> i128 {
+        rust_u128_sub(a as _, b as _) as _
+    }
+    #[lang = "i128_subo"]
+    pub fn rust_i128_subo(a: i128, b: i128) -> (i128, bool) {
+        let mut oflow = 0;
+        let r = a.subo(b, &mut oflow);
+        (r, oflow != 0)
+    }
+    #[lang = "u128_sub"]
+    pub fn rust_u128_sub(a: u128, b: u128) -> u128 {
+        a.sub(b)
+    }
+    #[lang = "u128_subo"]
+    pub fn rust_u128_subo(a: u128, b: u128) -> (u128, bool) {
+        let mut oflow = 0;
+        let r = a.subo(b, &mut oflow);
+        (r, oflow != 0)
+    }
+}
