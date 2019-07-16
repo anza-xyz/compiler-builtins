@@ -18,7 +18,6 @@
 #![feature(abi_unadjusted)]
 #![feature(linkage)]
 #![feature(lang_items)]
-// #![feature(cfg_target_vendor)]
 #![allow(unused_features)]
 #![no_builtins]
 #![cfg_attr(feature = "compiler-builtins", feature(staged_api))]
@@ -44,12 +43,8 @@
 #[cfg(test)]
 extern crate core;
 
-extern "C" {
-    fn myabort() -> !;
-}
-
 fn abort() -> ! {
-    unsafe { /*core::intrinsics::abort()*/ myabort() }
+    unsafe { core::intrinsics::abort() }
 }
 
 #[macro_use]

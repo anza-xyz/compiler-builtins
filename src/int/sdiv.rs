@@ -38,7 +38,7 @@ trait Mod: Int {
 
 impl Mod for i32 {}
 impl Mod for i64 {}
-// impl Mod for i128 {}
+impl Mod for i128 {}
 
 trait Divmod: Int {
     /// Returns `a / b` and sets `*rem = n % d`
@@ -84,10 +84,10 @@ intrinsics! {
         a.mod_(b)
     }
 
-    // #[win64_128bit_abi_hack]
-    // pub extern "C" fn __modti3(a: i128, b: i128) -> i128 {
-    //     a.mod_(b)
-    // }
+    #[win64_128bit_abi_hack]
+    pub extern "C" fn __modti3(a: i128, b: i128) -> i128 {
+        a.mod_(b)
+    }
 
     #[maybe_use_optimized_c_shim]
     pub extern "C" fn __divmodsi4(a: i32, b: i32, rem: &mut i32) -> i32 {
