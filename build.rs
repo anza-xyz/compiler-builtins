@@ -443,7 +443,7 @@ mod c {
             // Remove the implementations that fail to build.
             // This list should shrink to zero
             sources.remove(&[
-                "int_util",  // Unsupported architecture error
+                "int_util", // Unsupported architecture error
                 "mulvdi3", // Unsupported signed division
                 "mulvsi3", // Unsupported signed division
             ]);
