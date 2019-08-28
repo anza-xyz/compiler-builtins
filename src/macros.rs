@@ -282,6 +282,7 @@ pub mod win64_128bit_abi_hack {
     }
 }
 
+#[cfg(not(target_arch = "bpf"))]
 macro_rules! u128_lang_items {
     ($(
         #[lang = $lang:tt]

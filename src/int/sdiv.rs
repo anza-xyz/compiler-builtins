@@ -1,3 +1,8 @@
+// Use the C built-ins for BPF
+// One reason is these functions create ABI incompatible 128-bit parameter passing mechanisms
+// https://github.com/solana-labs/solana/issues/5716
+#![cfg(not(target_arch = "bpf"))]
+
 use int::Int;
 
 trait Div: Int {

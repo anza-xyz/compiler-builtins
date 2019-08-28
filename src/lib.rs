@@ -37,6 +37,7 @@
 #[cfg(test)]
 extern crate core;
 
+#[cfg(not(target_arch = "bpf"))]
 fn abort() -> ! {
     unsafe { core::intrinsics::abort() }
 }
