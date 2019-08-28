@@ -1,11 +1,13 @@
 use core::ops;
 
+#[cfg(not(target_arch = "bpf"))]
 macro_rules! hty {
     ($ty:ty) => {
         <$ty as LargeInt>::HighHalf
     };
 }
 
+#[cfg(not(target_arch = "bpf"))]
 macro_rules! os_ty {
     ($ty:ty) => {
         <$ty as Int>::OtherSign
