@@ -2,20 +2,21 @@
 #[path = "../libm/src/math/mod.rs"]
 mod libm;
 
-macro_rules! no_mangle {
-    ($(fn $fun:ident($($iid:ident : $ity:ty),+) -> $oty:ty;)+) => {
-        intrinsics! {
-            $(
-                pub extern "C" fn $fun($($iid: $ity),+) -> $oty {
-                    self::libm::$fun($($iid),+)
-                }
-            )+
-        }
-    }
-}
+// macro_rules! no_mangle {
+//     ($(fn $fun:ident($($iid:ident : $ity:ty),+) -> $oty:ty;)+) => {
+//         intrinsics! {
+//             $(
+//                 pub extern "C" fn $fun($($iid: $ity),+) -> $oty {
+//                     self::libm::$fun($($iid),+)
+//                 }
+//             )+
+//         }
+//     }
+// }
 
 // only for the wasm32-unknown-unknown target
-#[cfg(any(all(target_arch = "wasm32", target_os = "unknown"),
+#[cfg(any(/*target_arch = "bpf",*/
+          all(target_arch = "wasm32", target_os = "unknown"),
           all(target_vendor = "fortanix", target_env = "sgx")))]
 no_mangle! {
     fn acos(x: f64) -> f64;

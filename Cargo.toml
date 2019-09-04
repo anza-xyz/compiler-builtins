@@ -51,7 +51,7 @@ mem = []
 
 # Mangle all names so this can be linked in with other versions or other
 # compiler-rt implementations. Also used for testing
-mangled-names = []
+# mangled-names = []
 
 # Don't generate lang items for i128 intrisnics and such
 no-lang-items = []

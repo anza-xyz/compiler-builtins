@@ -9,7 +9,7 @@ doctest = false
 
 [build-dependencies]
 cast = { version = "0.2.2", features = ["x128"] }
-rand = { version = "0.4", features = ["i128_support"] }
+# rand = { version = "0.4", features = ["i128_support"] }
 
 [dependencies.compiler_builtins]
 path = ".."
