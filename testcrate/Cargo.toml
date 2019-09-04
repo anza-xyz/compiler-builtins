@@ -9,7 +9,7 @@ test = false
 doctest = false
 
 [build-dependencies]
-rand = "0.7"
+# rand = "0.7"
 
 [dependencies.compiler_builtins]
 path = ".."

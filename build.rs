@@ -25,7 +25,8 @@ fn main() {
 
     // Forcibly enable memory intrinsics on wasm32 & SGX as we don't have a libc to
     // provide them.
-    if (target.contains("wasm32") && !target.contains("wasi"))
+    if target.contains("bpf")
+        || (target.contains("wasm32") && !target.contains("wasi"))
         || (target.contains("sgx") && target.contains("fortanix"))
         || target.contains("-none")
         || target.contains("nvptx")
