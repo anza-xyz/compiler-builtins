@@ -23,8 +23,8 @@ fn main() {
     // Forcibly enable memory intrinsics on wasm32 & SGX as we don't have a libc to
     // provide them.
     if target.contains("bpf")
-        || target.contains("wasm32") && !target.contains("wasi"))
-        || (target.contains("sgx") && target.contains("fortanix") {
+        || (target.contains("wasm32") && !target.contains("wasi"))
+        || (target.contains("sgx") && target.contains("fortanix")) {
         println!("cargo:rustc-cfg=feature=\"mem\"");
     }
 
@@ -412,40 +412,42 @@ mod c {
         }
 
         if target_arch == "bpf" {
+            cfg.define("__ELF__", None);
+
             // Add the 128 bit implementations
             sources.extend(&[
-                "ashlti3.c",
-                "ashrti3.c",
-                "divti3.c",
-                "fixdfti.c",
-                "fixsfti.c",
-                "fixunsdfti.c",
-                "fixunssfti.c",
-                "floattidf.c",
-                "floattisf.c",
-                "floatuntidf.c",
-                "floatuntisf.c",
-                "lshrti3.c",
-                "modti3.c",
-                "muloti4.c",
-                "multi3.c",
-                "udivti3.c",
-                "udivmodti4.c",
-                "umodti3.c",
+                ("__ashlti3", "ashlti3.c"),
+                ("__ashrti3", "ashrti3.c"),
+                ("__divti3", "divti3.c"),
+                ("__fixdfti", "fixdfti.c"),
+                ("__fixsfti", "fixsfti.c"),
+                ("__fixunsdfti", "fixunsdfti.c"),
+                ("__fixunssfti", "fixunssfti.c"),
+                ("__floattidf", "floattidf.c"),
+                ("__floattisf", "floattisf.c"),
+                ("__floatuntidf", "floatuntidf.c"),
+                ("__floatuntisf", "floatuntisf.c"),
+                ("__lshrti3", "lshrti3.c"),
+                ("__modti3", "modti3.c"),
+                ("__muloti4", "muloti4.c"),
+                ("__multi3", "multi3.c"),
+                ("__udivti3", "udivti3.c"),
+                ("__udivmodti4", "udivmodti4.c"),
+                ("__umodti3", "umodti3.c"),
             ]);
 
             // Add any other missing builtins
             sources.extend(&[
-                "floatundidf.c",
-                "floatundisf.c",
+                ("__floatundidf", "floatundidf.c"),
+                ("__floatundisf", "floatundisf.c"),
             ]);
 
             // Remove the implementations that fail to build.
             // This list should shrink to zero
             sources.remove(&[
-                "int_util", // Unsupported architecture error
-                "mulvdi3", // Unsupported signed division
-                "mulvsi3", // Unsupported signed division
+                "__int_util", // Unsupported architecture error
+                "__mulvdi3", // Unsupported signed division
+                "__mulvsi3", // Unsupported signed division
             ]);
         }
 
