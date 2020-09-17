@@ -21,7 +21,7 @@ include = [
   '/compiler-rt/*',
   '/libm/src/math/*',
 ]
-links = 'compiler-rt'
+links = '../compiler-rt'
 
 [lib]
 test = false
