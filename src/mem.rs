@@ -5,56 +5,30 @@ type c_int = i16;
 #[cfg(not(target_pointer_width = "16"))]
 type c_int = i32;
 
-use core::intrinsics::{atomic_load_unordered, atomic_store_unordered, exact_div};
-use core::mem;
-use core::ops::{BitOr, Shl};
-
-#[cfg_attr(all(feature = "mem", not(feature = "mangled-names")), no_mangle)]
-pub unsafe extern "C" fn memcpy(dest: *mut u8, src: *const u8, n: usize) -> *mut u8 {
-    let mut i = 0;
-    while i < n {
-        *dest.offset(i as isize) = *src.offset(i as isize);
-        i += 1;
-    }
-    dest
-}
-
-#[cfg_attr(all(feature = "mem", not(feature = "mangled-names")), no_mangle)]
-pub unsafe extern "C" fn memmove(dest: *mut u8, src: *const u8, n: usize) -> *mut u8 {
-    if src < dest as *const u8 {
-        // copy from end
-        let mut i = n;
-        while i != 0 {
-            i -= 1;
-            *dest.offset(i as isize) = *src.offset(i as isize);
-        }
-    } else {
-        // copy from beginning
-        let mut i = 0;
-        while i < n {
-            *dest.offset(i as isize) = *src.offset(i as isize);
-            i += 1;
-        }
-    }
-    dest
-}
-
-#[cfg_attr(all(feature = "mem", not(feature = "mangled-names")), no_mangle)]
-pub unsafe extern "C" fn memset(s: *mut u8, c: c_int, n: usize) -> *mut u8 {
-    let mut i = 0;
-    while i < n {
-        *s.offset(i as isize) = c as u8;
-        i += 1;
-    }
-    s
-}
+// mem functions have been rewritten to copy 8 byte chunks.  No compensation for
+// alignment is made here with the requirement that the underlying hardware
+// supports unaligned read/writes.
 
 #[cfg_attr(all(feature = "mem", not(feature = "mangled-names")), no_mangle)]
 pub unsafe extern "C" fn memcmp(s1: *const u8, s2: *const u8, n: usize) -> i32 {
-    let mut i = 0;
-    while i < n {
-        let a = *s1.offset(i as isize);
-        let b = *s2.offset(i as isize);
+    let mut i: isize = 0;
+    let chunks = ((n as isize - i) / 8) as isize;
+    if chunks != 0 {
+        let s1_64 = s1 as *const _ as *const u64;
+        let s2_64 = s2 as *const _ as *const u64;
+        while i < chunks {
+            let a = *s1_64.offset(i);
+            let b = *s2_64.offset(i);
+            if a != b {
+                break;
+            }
+            i += 1;
+        }
+        i *= 8;
+    }
+    while i < n as isize {
+        let a = *s1.offset(i);
+        let b = *s2.offset(i);
         if a != b {
             return a as i32 - b as i32;
         }
@@ -64,131 +38,84 @@ pub unsafe extern "C" fn memcmp(s1: *const u8, s2: *const u8, n: usize) -> i32 {
 }
 
 #[cfg_attr(all(feature = "mem", not(feature = "mangled-names")), no_mangle)]
-pub unsafe extern "C" fn bcmp(s1: *const u8, s2: *const u8, n: usize) -> i32 {
-    memcmp(s1, s2, n)
-}
-
-// `bytes` must be a multiple of `mem::size_of::<T>()`
-fn memcpy_element_unordered_atomic<T: Copy>(dest: *mut T, src: *const T, bytes: usize) {
-    unsafe {
-        let n = exact_div(bytes, mem::size_of::<T>());
-        let mut i = 0;
-        while i < n {
-            atomic_store_unordered(dest.add(i), atomic_load_unordered(src.add(i)));
+pub unsafe extern "C" fn memcpy(dest: *mut u8, src: *const u8, n: usize) -> *mut u8 {
+    let mut i: isize = 0;
+    let chunks = ((n as isize - i) / 8) as isize;
+    if chunks != 0 {
+        let dest_64 = dest as *mut _ as *mut u64;
+        let src_64 = src as *const _ as *const u64;
+        while i < chunks {
+            *dest_64.offset(i) = *src_64.offset(i);
             i += 1;
         }
+        i *= 8;
     }
+    while i < n as isize {
+        *dest.offset(i) = *src.offset(i);
+        i += 1;
+    }
+    dest
 }
 
-// `bytes` must be a multiple of `mem::size_of::<T>()`
-fn memmove_element_unordered_atomic<T: Copy>(dest: *mut T, src: *const T, bytes: usize) {
-    unsafe {
-        let n = exact_div(bytes, mem::size_of::<T>());
-        if src < dest as *const T {
-            // copy from end
-            let mut i = n;
-            while i != 0 {
+#[cfg_attr(all(feature = "mem", not(feature = "mangled-names")), no_mangle)]
+pub unsafe extern "C" fn memmove(dest: *mut u8, src: *const u8, n: usize) -> *mut u8 {
+    if src < dest as *const u8 {
+        // copy from end
+        let chunks = (n / 8) as isize;
+        let mut i = chunks;
+        if i > 0 {
+            let dest_64 = dest as *mut _ as *mut u64;
+            let src_64 = src as *const _ as *const u64;
+            while i > 0 {
                 i -= 1;
-                atomic_store_unordered(dest.add(i), atomic_load_unordered(src.add(i)));
+                *dest_64.offset(i) = *src_64.offset(i);
             }
-        } else {
-            // copy from beginning
-            let mut i = 0;
-            while i < n {
-                atomic_store_unordered(dest.add(i), atomic_load_unordered(src.add(i)));
+        }
+        i = n as isize;
+        while i > chunks * 8 {
+            i -= 1;
+            *dest.offset(i) = *src.offset(i);
+        }
+    } else {
+        // copy from beginning
+        let mut i: isize = 0;
+        let chunks = ((n as isize - i) / 8) as isize;
+        if chunks != 0 {
+            let dest_64 = dest as *mut _ as *mut u64;
+            let src_64 = src as *const _ as *const u64;
+            while i < chunks {
+                *dest_64.offset(i) = *src_64.offset(i);
                 i += 1;
             }
+            i *= 8;
         }
-    }
-}
-
-// `T` must be a primitive integer type, and `bytes` must be a multiple of `mem::size_of::<T>()`
-fn memset_element_unordered_atomic<T>(s: *mut T, c: u8, bytes: usize)
-where
-    T: Copy + From<u8> + Shl<u32, Output = T> + BitOr<T, Output = T>,
-{
-    unsafe {
-        let n = exact_div(bytes, mem::size_of::<T>());
-
-        // Construct a value of type `T` consisting of repeated `c`
-        // bytes, to let us ensure we write each `T` atomically.
-        let mut x = T::from(c);
-        let mut i = 1;
-        while i < mem::size_of::<T>() {
-            x = x << 8 | T::from(c);
-            i += 1;
-        }
-
-        // Write it to `s`
-        let mut i = 0;
-        while i < n {
-            atomic_store_unordered(s.add(i), x);
+        while i < n as isize {
+            *dest.offset(i) = *src.offset(i);
             i += 1;
         }
     }
+    dest
 }
 
-intrinsics! {
-    #[cfg(target_has_atomic_load_store = "8")]
-    pub extern "C" fn __llvm_memcpy_element_unordered_atomic_1(dest: *mut u8, src: *const u8, bytes: usize) -> () {
-        memcpy_element_unordered_atomic(dest, src, bytes);
+#[cfg_attr(all(feature = "mem", not(feature = "mangled-names")), no_mangle)]
+pub unsafe extern "C" fn memset(s: *mut u8, c: c_int, n: usize) -> *mut u8 {
+    let mut i: isize = 0;
+    let chunks = ((n as isize - i) / 8) as isize;
+    if chunks != 0 {
+        let mut c_64 = c as u64 & 0xFF as u64;
+        c_64 |= c_64 << 8;
+        c_64 |= c_64 << 16;
+        c_64 |= c_64 << 32;
+        let s_64 = s as *mut _ as *mut u64;
+        while i < chunks {
+            *s_64.offset(i) = c_64;
+            i += 1;
+        }
+        i *= 8;
     }
-    #[cfg(target_has_atomic_load_store = "16")]
-    pub extern "C" fn __llvm_memcpy_element_unordered_atomic_2(dest: *mut u16, src: *const u16, bytes: usize) -> () {
-        memcpy_element_unordered_atomic(dest, src, bytes);
+    while i < n as isize {
+        *s.offset(i) = c as u8;
+        i += 1;
     }
-    #[cfg(target_has_atomic_load_store = "32")]
-    pub extern "C" fn __llvm_memcpy_element_unordered_atomic_4(dest: *mut u32, src: *const u32, bytes: usize) -> () {
-        memcpy_element_unordered_atomic(dest, src, bytes);
-    }
-    #[cfg(target_has_atomic_load_store = "64")]
-    pub extern "C" fn __llvm_memcpy_element_unordered_atomic_8(dest: *mut u64, src: *const u64, bytes: usize) -> () {
-        memcpy_element_unordered_atomic(dest, src, bytes);
-    }
-    #[cfg(target_has_atomic_load_store = "128")]
-    pub extern "C" fn __llvm_memcpy_element_unordered_atomic_16(dest: *mut u128, src: *const u128, bytes: usize) -> () {
-        memcpy_element_unordered_atomic(dest, src, bytes);
-    }
-
-    #[cfg(target_has_atomic_load_store = "8")]
-    pub extern "C" fn __llvm_memmove_element_unordered_atomic_1(dest: *mut u8, src: *const u8, bytes: usize) -> () {
-        memmove_element_unordered_atomic(dest, src, bytes);
-    }
-    #[cfg(target_has_atomic_load_store = "16")]
-    pub extern "C" fn __llvm_memmove_element_unordered_atomic_2(dest: *mut u16, src: *const u16, bytes: usize) -> () {
-        memmove_element_unordered_atomic(dest, src, bytes);
-    }
-    #[cfg(target_has_atomic_load_store = "32")]
-    pub extern "C" fn __llvm_memmove_element_unordered_atomic_4(dest: *mut u32, src: *const u32, bytes: usize) -> () {
-        memmove_element_unordered_atomic(dest, src, bytes);
-    }
-    #[cfg(target_has_atomic_load_store = "64")]
-    pub extern "C" fn __llvm_memmove_element_unordered_atomic_8(dest: *mut u64, src: *const u64, bytes: usize) -> () {
-        memmove_element_unordered_atomic(dest, src, bytes);
-    }
-    #[cfg(target_has_atomic_load_store = "128")]
-    pub extern "C" fn __llvm_memmove_element_unordered_atomic_16(dest: *mut u128, src: *const u128, bytes: usize) -> () {
-        memmove_element_unordered_atomic(dest, src, bytes);
-    }
-
-    #[cfg(target_has_atomic_load_store = "8")]
-    pub extern "C" fn __llvm_memset_element_unordered_atomic_1(s: *mut u8, c: u8, bytes: usize) -> () {
-        memset_element_unordered_atomic(s, c, bytes);
-    }
-    #[cfg(target_has_atomic_load_store = "16")]
-    pub extern "C" fn __llvm_memset_element_unordered_atomic_2(s: *mut u16, c: u8, bytes: usize) -> () {
-        memset_element_unordered_atomic(s, c, bytes);
-    }
-    #[cfg(target_has_atomic_load_store = "32")]
-    pub extern "C" fn __llvm_memset_element_unordered_atomic_4(s: *mut u32, c: u8, bytes: usize) -> () {
-        memset_element_unordered_atomic(s, c, bytes);
-    }
-    #[cfg(target_has_atomic_load_store = "64")]
-    pub extern "C" fn __llvm_memset_element_unordered_atomic_8(s: *mut u64, c: u8, bytes: usize) -> () {
-        memset_element_unordered_atomic(s, c, bytes);
-    }
-    #[cfg(target_has_atomic_load_store = "128")]
-    pub extern "C" fn __llvm_memset_element_unordered_atomic_16(s: *mut u128, c: u8, bytes: usize) -> () {
-        memset_element_unordered_atomic(s, c, bytes);
-    }
+    s
 }
