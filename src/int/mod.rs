@@ -129,10 +129,12 @@ macro_rules! int_impl_common {
 
         fn aborting_div(self, other: Self) -> Self {
             // unwrap(<Self>::checked_div(self, other)) // TODO 
+            other
         }
 
         fn aborting_rem(self, other: Self) -> Self {
              // unwrap(<Self>::checked_rem(self, other)) // TODO 
+             other
         }
 
         fn leading_zeros(self) -> u32 {

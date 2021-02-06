@@ -30,6 +30,7 @@ test = false
 # For more information on this dependency see rust-lang/rust's
 # `src/tools/rustc-std-workspace` folder
 core = { path = "../libcore" }
+
 [build-dependencies]
 cc = { optional = true, version = "1.0" }
 
