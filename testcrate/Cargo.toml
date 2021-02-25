@@ -9,7 +9,7 @@ test = false
 doctest = false
 
 [build-dependencies]
-rand = "0.7"
+# rand = "0.7"
 
 [dependencies]
 # For fuzzing tests we want a deterministic seedable RNG. We also eliminate potential

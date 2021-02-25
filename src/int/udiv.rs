@@ -1,3 +1,5 @@
+#![cfg(not(target_arch = "bpf"))]
+
 pub use int::specialized_div_rem::u128_divide_sparc;
 use int::specialized_div_rem::*;
 

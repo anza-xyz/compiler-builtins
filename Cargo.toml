@@ -21,15 +21,15 @@ include = [
   '/compiler-rt/*',
   '/libm/src/math/*',
 ]
-links = 'compiler-rt'
+links = '../compiler-rt'
 
 [lib]
 test = false
 
 [dependencies]
 # For more information on this dependency see rust-lang/rust's
-# `src/tools/rustc-std-workspace` folder
-core = { version = "1.0.0", optional = true, package = 'rustc-std-workspace-core' }
+# `library/rustc-std-workspace` folder
+core = { path = "../core" }
 
 [build-dependencies]
 cc = { optional = true, version = "1.0" }
@@ -56,13 +56,13 @@ mem = []
 
 # Mangle all names so this can be linked in with other versions or other
 # compiler-rt implementations. Also used for testing
-mangled-names = []
+# mangled-names = []
 
 # Don't generate lang items for i128 intrisnics and such
 no-lang-items = []
 
 # Only used in the compiler's build system
-rustc-dep-of-std = ['compiler-builtins', 'core']
+# rustc-dep-of-std = ['compiler-builtins', 'core']
 
 [[example]]
 name = "intrinsics"

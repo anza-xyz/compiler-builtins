@@ -45,7 +45,8 @@ pub mod int;
 #[cfg(any(
     all(target_arch = "wasm32", target_os = "unknown"),
     all(target_arch = "arm", target_os = "none"),
-    all(target_vendor = "fortanix", target_env = "sgx")
+    all(target_vendor = "fortanix", target_env = "sgx"),
+    target_arch = "bpf"
 ))]
 pub mod math;
 pub mod mem;
