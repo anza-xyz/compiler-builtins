@@ -633,7 +633,7 @@ fn main() {
             if a.0.is_nan()
                 || b.0.is_nan()
                 || c.is_nan()
-                || c.abs() <= unsafe { mem::transmute(4503599627370495u64) }
+                || c.abs() <= f64::from_bits(4503599627370495u64)
             {
                 None
             } else {
@@ -648,10 +648,7 @@ fn main() {
                 return None;
             }
             let c = a.0 / b.0;
-            if a.0.is_nan()
-                || b.0.is_nan()
-                || c.is_nan()
-                || c.abs() <= unsafe { mem::transmute(16777215u32) }
+            if a.0.is_nan() || b.0.is_nan() || c.is_nan() || c.abs() <= f32::from_bits(16777215u32)
             {
                 None
             } else {
@@ -671,7 +668,7 @@ fn main() {
                 if a.0.is_nan()
                     || b.0.is_nan()
                     || c.is_nan()
-                    || c.abs() <= unsafe { mem::transmute(4503599627370495u64) }
+                    || c.abs() <= f64::from_bits(4503599627370495u64)
                 {
                     None
                 } else {
@@ -689,7 +686,7 @@ fn main() {
                 if a.0.is_nan()
                     || b.0.is_nan()
                     || c.is_nan()
-                    || c.abs() <= unsafe { mem::transmute(16777215u32) }
+                    || c.abs() <= f32::from_bits(16777215u32)
                 {
                     None
                 } else {
@@ -806,6 +803,19 @@ fn main() {
         }",
     );
     gen(
+        |(a, b): (MyI128, MyI128)| {
+            if b.0 == 0 {
+                None
+            } else {
+                Some((a.0 / b.0, a.0 % b.0))
+            }
+        },
+        "{
+            let mut r = 0;
+            (builtins::int::sdiv::__divmodti4(a, b, &mut r), r)
+        }",
+    );
+    gen(
         |(a, b): (MyI32, MyI32)| {
             if b.0 == 0 {
                 None
@@ -858,6 +868,10 @@ fn main() {
 
     // int/shift.rs
     gen(
+        |(a, b): (MyU32, MyU32)| Some(a.0 << (b.0 % 32)),
+        "builtins::int::shift::__ashlsi3(a, b % 32)",
+    );
+    gen(
         |(a, b): (MyU64, MyU32)| Some(a.0 << (b.0 % 64)),
         "builtins::int::shift::__ashldi3(a, b % 64)",
     );
@@ -866,12 +880,20 @@ fn main() {
         "builtins::int::shift::__ashlti3(a, b % 128)",
     );
     gen(
+        |(a, b): (MyI32, MyU32)| Some(a.0 >> (b.0 % 32)),
+        "builtins::int::shift::__ashrsi3(a, b % 32)",
+    );
+    gen(
         |(a, b): (MyI64, MyU32)| Some(a.0 >> (b.0 % 64)),
         "builtins::int::shift::__ashrdi3(a, b % 64)",
     );
     gen(
         |(a, b): (MyI128, MyU32)| Some(a.0 >> (b.0 % 128)),
         "builtins::int::shift::__ashrti3(a, b % 128)",
+    );
+    gen(
+        |(a, b): (MyU32, MyU32)| Some(a.0 >> (b.0 % 32)),
+        "builtins::int::shift::__lshrsi3(a, b % 32)",
     );
     gen(
         |(a, b): (MyU64, MyU32)| Some(a.0 >> (b.0 % 64)),
@@ -1285,6 +1307,7 @@ my_integer! {
     struct MyI32(i32);
     struct MyI64(i64);
     struct MyI128(i128);
+    struct MyU16(u16);
     struct MyU32(u32);
     struct MyU64(u64);
     struct MyU128(u128);
