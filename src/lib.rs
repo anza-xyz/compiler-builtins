@@ -1,7 +1,8 @@
 #![cfg_attr(feature = "compiler-builtins", compiler_builtins)]
+#![cfg_attr(not(feature = "no-asm"), feature(asm))]
 #![feature(abi_unadjusted)]
-#![feature(llvm_asm)]
-#![feature(global_asm)]
+#![cfg_attr(not(feature = "no-asm"), feature(llvm_asm))]
+#![cfg_attr(not(feature = "no-asm"), feature(global_asm))]
 #![feature(cfg_target_has_atomic)]
 #![feature(compiler_builtins)]
 #![feature(core_intrinsics)]
@@ -15,7 +16,7 @@
 // We use `u128` in a whole bunch of places which we currently agree with the
 // compiler on ABIs and such, so we should be "good enough" for now and changes
 // to the `u128` ABI will be reflected here.
-#![allow(improper_ctypes)]
+#![allow(improper_ctypes, improper_ctypes_definitions)]
 
 // We disable #[no_mangle] for tests so that we can verify the test results
 // against the native compiler-rt implementations of the builtins.
@@ -30,7 +31,7 @@
 #[cfg(test)]
 extern crate core;
 
-#[cfg(not(target_arch = "bpf"))]
+#[allow(unused_unsafe)]
 fn abort() -> ! {
     unsafe { core::intrinsics::abort() }
 }
@@ -41,10 +42,12 @@ mod macros;
 pub mod float;
 pub mod int;
 
-#[cfg(any(target_arch = "bpf",
-          all(target_arch = "wasm32", target_os = "unknown"),
-          all(target_arch = "arm", target_os = "none"),
-          all(target_vendor = "fortanix", target_env = "sgx")))]
+#[cfg(any(
+    all(target_arch = "wasm32", target_os = "unknown"),
+    all(target_arch = "arm", target_os = "none"),
+    all(target_vendor = "fortanix", target_env = "sgx"),
+    target_arch = "bpf"
+))]
 pub mod math;
 pub mod mem;
 

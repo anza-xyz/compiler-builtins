@@ -11,6 +11,12 @@ doctest = false
 [build-dependencies]
 # rand = "0.7"
 
+[dependencies]
+# For fuzzing tests we want a deterministic seedable RNG. We also eliminate potential
+# problems with system RNGs on the variety of platforms this crate is tested on.
+# `xoshiro128**` is used for its quality, size, and speed at generating `u32` shift amounts.
+rand_xoshiro = "0.4"
+
 [dependencies.compiler_builtins]
 path = ".."
 default-features = false
@@ -22,7 +28,8 @@ utest-cortex-m-qemu = { default-features = false, git = "https://github.com/japa
 utest-macros = { git = "https://github.com/japaric/utest" }
 
 [features]
+default = ["mangled-names"]
 c = ["compiler_builtins/c"]
+no-asm = ["compiler_builtins/no-asm"]
 mem = ["compiler_builtins/mem"]
 mangled-names = ["compiler_builtins/mangled-names"]
-default = ["mangled-names"]

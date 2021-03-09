@@ -25,11 +25,11 @@ fn main() {
 
     // Forcibly enable memory intrinsics on wasm32 & SGX as we don't have a libc to
     // provide them.
-    if target.contains("bpf")
-        || (target.contains("wasm32") && !target.contains("wasi"))
+    if (target.contains("wasm32") && !target.contains("wasi"))
         || (target.contains("sgx") && target.contains("fortanix"))
         || target.contains("-none")
         || target.contains("nvptx")
+        || target.contains("bpf")
     {
         println!("cargo:rustc-cfg=feature=\"mem\"");
     }
@@ -420,6 +420,37 @@ mod c {
             if target_os != "windows" {
                 sources.extend(&[("__multc3", "multc3.c")]);
             }
+
+            if target_env == "musl" {
+                sources.extend(&[
+                    ("__addtf3", "addtf3.c"),
+                    ("__multf3", "multf3.c"),
+                    ("__subtf3", "subtf3.c"),
+                    ("__divtf3", "divtf3.c"),
+                    ("__powitf2", "powitf2.c"),
+                    ("__fe_getround", "fp_mode.c"),
+                    ("__fe_raise_inexact", "fp_mode.c"),
+                ]);
+            }
+        }
+
+        if target_arch == "mips" {
+            sources.extend(&[("__bswapsi2", "bswapsi2.c")]);
+        }
+
+        if target_arch == "mips64" {
+            sources.extend(&[
+                ("__extenddftf2", "extenddftf2.c"),
+                ("__netf2", "comparetf2.c"),
+                ("__addtf3", "addtf3.c"),
+                ("__multf3", "multf3.c"),
+                ("__subtf3", "subtf3.c"),
+                ("__fixtfsi", "fixtfsi.c"),
+                ("__floatsitf", "floatsitf.c"),
+                ("__fixunstfsi", "fixunstfsi.c"),
+                ("__floatunsitf", "floatunsitf.c"),
+                ("__fe_getround", "fp_mode.c"),
+            ]);
         }
 
         // Remove the assembly implementations that won't compile for the target
@@ -447,6 +478,10 @@ mod c {
             sources.extend(&[
                 ("__ashlti3", "ashlti3.c"),
                 ("__ashrti3", "ashrti3.c"),
+                ("__divdi3", "divdi3.c"),
+                ("__divmoddi4", "divmoddi4.c"),
+                ("__divmodsi4", "divmodsi4.c"),
+                ("__divsi3", "divsi3.c"),
                 ("__divti3", "divti3.c"),
                 ("__fixdfti", "fixdfti.c"),
                 ("__fixsfti", "fixsfti.c"),
@@ -460,8 +495,12 @@ mod c {
                 ("__modti3", "modti3.c"),
                 ("__muloti4", "muloti4.c"),
                 ("__multi3", "multi3.c"),
+                ("__udivdi3", "udivdi3.c"),
+                ("__udivmoddi4", "udivmoddi4.c"),
+                ("__udivmodsi4", "udivmodsi4.c"),
+                ("__udivmodti4", "bpf/udivmodti4.c"),
+                ("__udivsi3", "udivsi3.c"),
                 ("__udivti3", "udivti3.c"),
-                ("__udivmodti4", "udivmodti4.c"),
                 ("__umodti3", "umodti3.c"),
             ]);
 
