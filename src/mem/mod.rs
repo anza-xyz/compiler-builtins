@@ -62,7 +62,12 @@ pub unsafe extern "C" fn memmove(dest: *mut u8, src: *const u8, n: usize) -> *mu
     if src < dest as *const u8 {
         // copy from end
         let chunks = (n / 8) as isize;
-        let mut i = chunks;
+        let mut i = n as isize;
+        while i > chunks * 8 {
+            i -= 1;
+            *dest.offset(i) = *src.offset(i);
+        }
+        i = chunks;
         if i > 0 {
             let dest_64 = dest as *mut _ as *mut u64;
             let src_64 = src as *const _ as *const u64;
@@ -70,11 +75,6 @@ pub unsafe extern "C" fn memmove(dest: *mut u8, src: *const u8, n: usize) -> *mu
                 i -= 1;
                 *dest_64.offset(i) = *src_64.offset(i);
             }
-        }
-        i = n as isize;
-        while i > chunks * 8 {
-            i -= 1;
-            *dest.offset(i) = *src.offset(i);
         }
     } else {
         // copy from beginning
