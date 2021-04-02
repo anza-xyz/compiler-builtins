@@ -514,8 +514,8 @@ mod c {
             // This list should shrink to zero
             sources.remove(&[
                 "__int_util", // Unsupported architecture error
-                "__mulvdi3", // Unsupported signed division
-                "__mulvsi3", // Unsupported signed division
+                "__mulvdi3",  // Unsupported signed division
+                "__mulvsi3",  // Unsupported signed division
             ]);
         }
 
@@ -544,6 +544,6 @@ mod c {
             println!("cargo:rustc-cfg={}=\"optimized-c\"", sym);
         }
 
-        cfg.compile("compiler-rt");
+        cfg.compile("libcompiler-rt.a");
     }
 }
