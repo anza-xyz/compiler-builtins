@@ -1,3 +1,5 @@
+#![cfg(not(target_arch = "bpf"))]
+
 use int::{DInt, HInt, Int};
 
 trait Ashl: DInt {
