@@ -29,6 +29,7 @@ fn main() {
         || (target.contains("sgx") && target.contains("fortanix"))
         || target.contains("-none")
         || target.contains("nvptx")
+        || target.contains("bpf")
     {
         println!("cargo:rustc-cfg=feature=\"mem\"");
     }
@@ -475,6 +476,54 @@ mod c {
 
         if llvm_target[0] == "thumbv7m" || llvm_target[0] == "thumbv7em" {
             sources.remove(&["__aeabi_cdcmp", "__aeabi_cfcmp"]);
+        }
+
+        if target_arch == "bpf" {
+            cfg.define("__ELF__", None);
+
+            // Add the 128 bit implementations
+            sources.extend(&[
+                ("__ashlti3", "ashlti3.c"),
+                ("__ashrti3", "ashrti3.c"),
+                ("__divdi3", "divdi3.c"),
+                ("__divmoddi4", "divmoddi4.c"),
+                ("__divmodsi4", "divmodsi4.c"),
+                ("__divsi3", "divsi3.c"),
+                ("__divti3", "divti3.c"),
+                ("__fixdfti", "fixdfti.c"),
+                ("__fixsfti", "fixsfti.c"),
+                ("__fixunsdfti", "fixunsdfti.c"),
+                ("__fixunssfti", "fixunssfti.c"),
+                ("__floattidf", "floattidf.c"),
+                ("__floattisf", "floattisf.c"),
+                ("__floatuntidf", "floatuntidf.c"),
+                ("__floatuntisf", "floatuntisf.c"),
+                ("__lshrti3", "lshrti3.c"),
+                ("__modti3", "modti3.c"),
+                ("__muloti4", "muloti4.c"),
+                ("__multi3", "multi3.c"),
+                ("__udivdi3", "udivdi3.c"),
+                ("__udivmoddi4", "udivmoddi4.c"),
+                ("__udivmodsi4", "udivmodsi4.c"),
+                ("__udivmodti4", "bpf/udivmodti4.c"),
+                ("__udivsi3", "udivsi3.c"),
+                ("__udivti3", "udivti3.c"),
+                ("__umodti3", "umodti3.c"),
+            ]);
+
+            // Add any other missing builtins
+            sources.extend(&[
+                ("__floatundidf", "floatundidf.c"),
+                ("__floatundisf", "floatundisf.c"),
+            ]);
+
+            // Remove the implementations that fail to build.
+            // This list should shrink to zero
+            sources.remove(&[
+                "__int_util", // Unsupported architecture error
+                "__mulvdi3",  // Unsupported signed division
+                "__mulvsi3",  // Unsupported signed division
+            ]);
         }
 
         // When compiling the C code we require the user to tell us where the
