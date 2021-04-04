@@ -1,3 +1,5 @@
+#![cfg(not(target_arch = "bpf"))]
+
 use int::udiv::*;
 
 macro_rules! sdivmod {
