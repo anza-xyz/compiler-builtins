@@ -1,3 +1,4 @@
+#![cfg(not(target_arch = "bpf"))]
 // TODO: when `unsafe_block_in_unsafe_fn` is stabilized, remove this
 #![allow(unused_unsafe)]
 // The functions are complex with many branches, and explicit
