@@ -1,3 +1,5 @@
+#![cfg(not(target_arch = "bpf"))]
+
 #[cfg(not(feature = "public-test-deps"))]
 pub(crate) use int::specialized_div_rem::*;
 
