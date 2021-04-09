@@ -209,15 +209,32 @@ intrinsics! {
     }
 }
 
-// mem functions have been rewritten to copy 8 byte chunks.  No compensation for
-// alignment is made here with the requirement that the underlying hardware
-// supports unaligned read/writes.
+// MEM functions have been rewritten to copy 8 byte chunks.  No
+// compensation for alignment is made here with the requirement that
+// the underlying hardware supports unaligned loads/stores.  If the
+// number of store operations is greater than 8 the memory operation
+// is performed in the run-time system instead, by calling the
+// corresponding "C" function.
+
+#[cfg(target_arch = "bpf")]
+extern "C" {
+    fn sol_memcpy_(dest: *mut u8, src: *const u8, n: u64);
+    fn sol_memmove_(dest: *mut u8, src: *const u8, n: u64);
+    fn sol_memset_(s: *mut u8, c: u8, n: u64);
+    fn sol_memcmp_(s1: *const u8, s2: *const u8, n: u64, result: *mut i32);
+}
 
 #[cfg(target_arch = "bpf")]
 #[cfg_attr(all(feature = "mem", not(feature = "mangled-names")), no_mangle)]
+#[inline]
 pub unsafe extern "C" fn memcpy(dest: *mut u8, src: *const u8, n: usize) -> *mut u8 {
+    let chunks = (n / 8) as isize;
+    let nstore = n - (7 * chunks) as usize;
+    if nstore > 8 {
+        sol_memcpy_(dest, src, n as u64);
+        return dest;
+    }
     let mut i: isize = 0;
-    let chunks = ((n as isize - i) / 8) as isize;
     if chunks != 0 {
         let dest_64 = dest as *mut _ as *mut u64;
         let src_64 = src as *const _ as *const u64;
@@ -236,10 +253,16 @@ pub unsafe extern "C" fn memcpy(dest: *mut u8, src: *const u8, n: usize) -> *mut
 
 #[cfg(target_arch = "bpf")]
 #[cfg_attr(all(feature = "mem", not(feature = "mangled-names")), no_mangle)]
+#[inline]
 pub unsafe extern "C" fn memmove(dest: *mut u8, src: *const u8, n: usize) -> *mut u8 {
+    let chunks = (n / 8) as isize;
+    let nstore = n - (7 * chunks) as usize;
+    if nstore > 8 {
+        sol_memmove_(dest, src, n as u64);
+        return dest;
+    }
     if src < dest as *const u8 {
         // copy from end
-        let chunks = (n / 8) as isize;
         let mut i = n as isize;
         while i > chunks * 8 {
             i -= 1;
@@ -257,7 +280,6 @@ pub unsafe extern "C" fn memmove(dest: *mut u8, src: *const u8, n: usize) -> *mu
     } else {
         // copy from beginning
         let mut i: isize = 0;
-        let chunks = ((n as isize - i) / 8) as isize;
         if chunks != 0 {
             let dest_64 = dest as *mut _ as *mut u64;
             let src_64 = src as *const _ as *const u64;
@@ -277,9 +299,15 @@ pub unsafe extern "C" fn memmove(dest: *mut u8, src: *const u8, n: usize) -> *mu
 
 #[cfg(target_arch = "bpf")]
 #[cfg_attr(all(feature = "mem", not(feature = "mangled-names")), no_mangle)]
+#[inline]
 pub unsafe extern "C" fn memset(s: *mut u8, c: c_int, n: usize) -> *mut u8 {
+    let chunks = (n / 8) as isize;
+    let nstore = n - (7 * chunks) as usize;
+    if nstore > 8 {
+        sol_memset_(s, c as u8, n as u64);
+        return s;
+    }
     let mut i: isize = 0;
-    let chunks = ((n as isize - i) / 8) as isize;
     if chunks != 0 {
         let mut c_64 = c as u64 & 0xFF as u64;
         c_64 |= c_64 << 8;
@@ -301,9 +329,16 @@ pub unsafe extern "C" fn memset(s: *mut u8, c: c_int, n: usize) -> *mut u8 {
 
 #[cfg(target_arch = "bpf")]
 #[cfg_attr(all(feature = "mem", not(feature = "mangled-names")), no_mangle)]
+#[inline]
 pub unsafe extern "C" fn memcmp(s1: *const u8, s2: *const u8, n: usize) -> i32 {
+    let chunks = (n / 8) as isize;
+    let nstore = n - (7 * chunks) as usize;
+    if nstore > 8 {
+        let mut result = 0;
+        sol_memcmp_(s1, s2, n as u64, &mut result as *mut i32);
+        return result;
+    }
     let mut i: isize = 0;
-    let chunks = ((n as isize - i) / 8) as isize;
     if chunks != 0 {
         let s1_64 = s1 as *const _ as *const u64;
         let s2_64 = s2 as *const _ as *const u64;
