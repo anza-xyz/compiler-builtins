@@ -1,6 +1,7 @@
 // makes configuration easier
 #![allow(unused_macros)]
 
+#[cfg(not(target_arch = "bpf"))]
 use compiler_builtins::float::Float;
 use testcrate::*;
 
@@ -111,6 +112,7 @@ macro_rules! extend {
     };
 }
 
+#[cfg(not(target_arch = "bpf"))]
 #[test]
 fn float_extend() {
     use compiler_builtins::float::extend::__extendsfdf2;
@@ -167,7 +169,10 @@ macro_rules! pow {
     };
 }
 
-#[cfg(not(all(target_arch = "x86", not(target_feature = "sse"))))]
+#[cfg(not(any(
+    all(target_arch = "x86", not(target_feature = "sse")),
+    target_arch = "bpf"
+)))]
 #[test]
 fn float_pow() {
     use compiler_builtins::float::pow::{__powidf2, __powisf2};
