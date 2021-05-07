@@ -1,3 +1,5 @@
+#![cfg(not(target_arch = "bpf"))]
+
 use testcrate::*;
 
 macro_rules! shift {

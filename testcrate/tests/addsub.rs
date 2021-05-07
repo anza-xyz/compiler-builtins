@@ -1,3 +1,4 @@
+#![cfg(not(target_arch = "bpf"))]
 #![allow(unused_macros)]
 
 use testcrate::*;
