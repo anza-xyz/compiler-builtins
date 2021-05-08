@@ -499,6 +499,7 @@ mod c {
                 ("__floatuntidf", "floatuntidf.c"),
                 ("__floatuntisf", "floatuntisf.c"),
                 ("__lshrti3", "lshrti3.c"),
+                ("__moddi3", "moddi3.c"),
                 ("__modti3", "modti3.c"),
                 ("__muloti4", "muloti4.c"),
                 ("__multi3", "multi3.c"),
@@ -508,6 +509,7 @@ mod c {
                 ("__udivmodti4", "bpf/udivmodti4.c"),
                 ("__udivsi3", "udivsi3.c"),
                 ("__udivti3", "udivti3.c"),
+                ("__umoddi3", "umoddi3.c"),
                 ("__umodti3", "umodti3.c"),
             ]);
 
