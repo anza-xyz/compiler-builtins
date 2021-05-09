@@ -37,6 +37,7 @@ fn memcpy_10() {
     }
 }
 
+#[cfg(not(target_arch = "bpf"))]
 #[test]
 fn memcpy_big() {
     // Make the arrays cross 3 pages
