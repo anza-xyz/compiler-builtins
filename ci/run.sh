@@ -7,21 +7,40 @@ if [ "$XARGO" = "1" ]; then
     # FIXME: currently these tests don't work...
     echo nothing to do
 else
-    run="cargo test --manifest-path testcrate/Cargo.toml --target $1"
-    $run
-    $run --release
-    $run --features c
-    $run --features c --release
-    $run --features no-asm
-    $run --features no-asm --release
+    if [ "$1" = "bpfel-unknown-unknown" ]; then
+        run="cargo run-bpf-tests --manifest-path testcrate/Cargo.toml"
+        $run
+    else
+        run="cargo test --manifest-path testcrate/Cargo.toml --target $1"
+        $run
+        $run --release
+        $run --features c
+        $run --features c --release
+        $run --features no-asm
+        $run --features no-asm --release
+    fi
 fi
 
-cargo build --target $1
-cargo build --target $1 --release
-cargo build --target $1 --features c
-cargo build --target $1 --release --features c
-cargo build --target $1 --features no-asm
-cargo build --target $1 --release --features no-asm
+if [ "$1" = "bpfel-unknown-unknown" ]; then
+    flags="-C link-arg=-z \
+           -C link-arg=notext \
+           -C link-arg=-T${HOME}/.cache/solana/sdk/rust/bpf.ld \
+           -C link-arg=--Bdynamic \
+           -C link-arg=--threads=1 \
+           -C link-arg=--entry=entrypoint \
+           -C linker=${HOME}/.cache/solana/v1.7/bpf-tools/llvm/bin/ld.lld"
+    RUSTFLAGS="-C link-arg=-shared ${flags}" cargo +bpf build --target $1
+    RUSTFLAGS="-C link-arg=-shared ${flags}" cargo +bpf build --target $1 --release
+    RUSTFLAGS="-C link-arg=-shared ${flags}" cargo +bpf build --target $1 --features no-asm
+    RUSTFLAGS="-C link-arg=-shared ${flags}" cargo +bpf build --target $1 --release --features no-asm
+else
+    cargo build --target $1
+    cargo build --target $1 --release
+    cargo build --target $1 --features c
+    cargo build --target $1 --release --features c
+    cargo build --target $1 --features no-asm
+    cargo build --target $1 --release --features no-asm
+fi
 
 PREFIX=$(echo $1 | sed -e 's/unknown-//')-
 case $1 in
@@ -78,11 +97,20 @@ done
 rm -f $path
 
 # Verify that we haven't drop any intrinsic/symbol
-build_intrinsics="$cargo build --target $1 -v --example intrinsics"
-RUSTFLAGS="-C debug-assertions=no" $build_intrinsics
-RUSTFLAGS="-C debug-assertions=no" $build_intrinsics --release
-RUSTFLAGS="-C debug-assertions=no" $build_intrinsics --features c
-RUSTFLAGS="-C debug-assertions=no" $build_intrinsics --features c --release
+if [ "$1" = "bpfel-unknown-unknown" ]; then
+    build_intrinsics="$cargo +bpf build --target $1 -v --example intrinsics"
+    RUSTFLAGS="-C debug-assertions=no ${flags}" $build_intrinsics
+else
+    build_intrinsics="$cargo build --target $1 -v --example intrinsics"
+    RUSTFLAGS="-C debug-assertions=no" $build_intrinsics
+    RUSTFLAGS="-C debug-assertions=no" $build_intrinsics --release
+    RUSTFLAGS="-C debug-assertions=no" $build_intrinsics --features c
+    RUSTFLAGS="-C debug-assertions=no" $build_intrinsics --features c --release
+fi
+
+if [ "$1" = "bpfel-unknown-unknown" ]; then
+    exit 0
+fi
 
 # Verify that there are no undefined symbols to `panic` within our
 # implementations
