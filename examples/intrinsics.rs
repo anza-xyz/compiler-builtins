@@ -6,16 +6,17 @@
 #![allow(unused_features)]
 #![cfg_attr(thumb, no_main)]
 #![deny(dead_code)]
-#![feature(bench_black_box)]
+#![cfg_attr(not(target_arch = "bpf"), feature(bench_black_box))]
 #![feature(lang_items)]
 #![feature(start)]
 #![feature(allocator_api)]
+#![cfg_attr(target_arch = "bpf", feature(test))]
 #![no_std]
 
 extern crate panic_handler;
 
 #[cfg(all(not(thumb), not(windows), not(target_arch = "wasm32")))]
-#[link(name = "c")]
+#[cfg_attr(not(target_arch = "bpf"), link(name = "c"))]
 extern "C" {}
 
 // Every function in this module maps will be lowered to an intrinsic by LLVM, if the platform
