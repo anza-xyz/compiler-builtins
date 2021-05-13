@@ -22,17 +22,10 @@ else
 fi
 
 if [ "$1" = "bpfel-unknown-unknown" ]; then
-    flags="-C link-arg=-z \
-           -C link-arg=notext \
-           -C link-arg=-T${HOME}/.cache/solana/sdk/rust/bpf.ld \
-           -C link-arg=--Bdynamic \
-           -C link-arg=--threads=1 \
-           -C link-arg=--entry=entrypoint \
-           -C linker=${HOME}/.cache/solana/v1.7/bpf-tools/llvm/bin/ld.lld"
-    RUSTFLAGS="-C link-arg=-shared ${flags}" cargo +bpf build --target $1
-    RUSTFLAGS="-C link-arg=-shared ${flags}" cargo +bpf build --target $1 --release
-    RUSTFLAGS="-C link-arg=-shared ${flags}" cargo +bpf build --target $1 --features no-asm
-    RUSTFLAGS="-C link-arg=-shared ${flags}" cargo +bpf build --target $1 --release --features no-asm
+    cargo +bpf build --target $1
+    cargo +bpf build --target $1 --release
+    cargo +bpf build --target $1 --features no-asm
+    cargo +bpf build --target $1 --release --features no-asm
 else
     cargo build --target $1
     cargo build --target $1 --release
@@ -99,7 +92,7 @@ rm -f $path
 # Verify that we haven't drop any intrinsic/symbol
 if [ "$1" = "bpfel-unknown-unknown" ]; then
     build_intrinsics="$cargo +bpf build --target $1 -v --example intrinsics"
-    RUSTFLAGS="-C debug-assertions=no ${flags}" $build_intrinsics
+    RUSTFLAGS="-C debug-assertions=no" $build_intrinsics
 else
     build_intrinsics="$cargo build --target $1 -v --example intrinsics"
     RUSTFLAGS="-C debug-assertions=no" $build_intrinsics
