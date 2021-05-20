@@ -1,11 +1,3 @@
-# Fork of the Rust Programming Language's compiler-builtins library
-
-Used by [rust-bpf-sysroot](https://github.com/solana-labs/rust-bpf-sysroot) and contains submodules, to sync use:
-
-```git clone --recurse-submodules ```
-
----
-
 # `compiler-builtins`
 
 > Porting `compiler-rt` intrinsics to Rust
