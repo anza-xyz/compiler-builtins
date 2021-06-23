@@ -2,7 +2,6 @@
 #[path = "../libm/src/math/mod.rs"]
 mod libm;
 
-#[cfg(not(target_arch = "bpf"))]
 macro_rules! no_mangle {
     ($(fn $fun:ident($($iid:ident : $ity:ty),+) -> $oty:ty;)+) => {
         intrinsics! {
@@ -23,7 +22,8 @@ macro_rules! no_mangle {
     ),
     all(target_arch = "x86_64", target_os = "uefi"),
     all(target_arch = "xtensa", target_os = "none"),
-    all(target_vendor = "fortanix", target_env = "sgx")
+    all(target_vendor = "fortanix", target_env = "sgx"),
+    target_arch = "bpf"
 ))]
 no_mangle! {
     fn acos(x: f64) -> f64;
