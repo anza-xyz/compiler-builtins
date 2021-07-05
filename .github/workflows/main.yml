@@ -98,10 +98,10 @@ jobs:
       shell: bash
     - name: Install BPF tools
       run: |
-        curl -L -o solana-bpf-tools-osx.tar.bz2 https://github.com/solana-labs/bpf-tools/releases/download/v1.9/solana-bpf-tools-osx.tar.bz2
-        mkdir -p ~/.cache/solana/v1.9/bpf-tools
-        tar -xjf solana-bpf-tools-osx.tar.bz2 --strip-components 1 -C ~/.cache/solana/v1.9/bpf-tools
-        rustup toolchain link bpf ~/.cache/solana/v1.9/bpf-tools/rust
+        curl -L -o solana-bpf-tools-osx.tar.bz2 https://github.com/solana-labs/bpf-tools/releases/download/v1.12/solana-bpf-tools-osx.tar.bz2
+        mkdir -p ~/.cache/solana/v1.12/bpf-tools
+        tar -xjf solana-bpf-tools-osx.tar.bz2 --strip-components 1 -C ~/.cache/solana/v1.12/bpf-tools
+        rustup toolchain link bpf ~/.cache/solana/v1.12/bpf-tools/rust
         cargo install --git https://github.com/solana-labs/cargo-run-bpf-tests.git
       if: matrix.target == 'bpfel-unknown-unknown'
     # Non-linux tests just use our raw script
