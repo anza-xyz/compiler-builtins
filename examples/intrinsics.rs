@@ -6,7 +6,7 @@
 #![allow(unused_features)]
 #![cfg_attr(thumb, no_main)]
 #![deny(dead_code)]
-#![cfg_attr(not(target_arch = "bpf"), feature(bench_black_box))]
+#![feature(bench_black_box)]
 #![feature(lang_items)]
 #![feature(start)]
 #![feature(allocator_api)]
