@@ -230,7 +230,7 @@ extern "C" {
 pub unsafe extern "C" fn memcpy(dest: *mut u8, src: *const u8, n: usize) -> *mut u8 {
     let chunks = (n / 8) as isize;
     let nstore = n - (7 * chunks) as usize;
-    if nstore > 8 {
+    if nstore > 4 {
         sol_memcpy_(dest, src, n as u64);
         return dest;
     }
@@ -257,7 +257,7 @@ pub unsafe extern "C" fn memcpy(dest: *mut u8, src: *const u8, n: usize) -> *mut
 pub unsafe extern "C" fn memmove(dest: *mut u8, src: *const u8, n: usize) -> *mut u8 {
     let chunks = (n / 8) as isize;
     let nstore = n - (7 * chunks) as usize;
-    if nstore > 8 {
+    if nstore > 4 {
         sol_memmove_(dest, src, n as u64);
         return dest;
     }
@@ -303,7 +303,7 @@ pub unsafe extern "C" fn memmove(dest: *mut u8, src: *const u8, n: usize) -> *mu
 pub unsafe extern "C" fn memset(s: *mut u8, c: c_int, n: usize) -> *mut u8 {
     let chunks = (n / 8) as isize;
     let nstore = n - (7 * chunks) as usize;
-    if nstore > 8 {
+    if nstore > 4 {
         sol_memset_(s, c as u8, n as u64);
         return s;
     }
@@ -333,7 +333,7 @@ pub unsafe extern "C" fn memset(s: *mut u8, c: c_int, n: usize) -> *mut u8 {
 pub unsafe extern "C" fn memcmp(s1: *const u8, s2: *const u8, n: usize) -> i32 {
     let chunks = (n / 8) as isize;
     let nstore = n - (7 * chunks) as usize;
-    if nstore > 8 {
+    if nstore > 4 {
         let mut result = 0;
         sol_memcmp_(s1, s2, n as u64, &mut result as *mut i32);
         return result;
