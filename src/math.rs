@@ -23,7 +23,7 @@ macro_rules! no_mangle {
     all(target_arch = "x86_64", target_os = "uefi"),
     all(target_arch = "xtensa", target_os = "none"),
     all(target_vendor = "fortanix", target_env = "sgx"),
-    target_arch = "bpf"
+    target_arch = "bpf",
 ))]
 no_mangle! {
     fn acos(x: f64) -> f64;
@@ -72,7 +72,8 @@ no_mangle! {
         not(target_env = "wasi")
     ),
     all(target_arch = "xtensa", target_os = "none"),
-    all(target_vendor = "fortanix", target_env = "sgx")
+    all(target_vendor = "fortanix", target_env = "sgx"),
+    target_arch = "bpf",
 ))]
 no_mangle! {
     fn atan(x: f64) -> f64;
@@ -115,4 +116,10 @@ no_mangle! {
     fn fmod(x: f64, y: f64) -> f64;
     // `f32 % f32`
     fn fmodf(x: f32, y: f32) -> f32;
+}
+
+#[cfg(target_arch = "bpf")]
+no_mangle! {
+    fn sqrt(x: f64) -> f64;
+    fn sqrtf(x: f32) -> f32;
 }
