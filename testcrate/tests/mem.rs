@@ -159,6 +159,7 @@ fn memmove_forward_misaligned_nonaligned_start() {
     }
 }
 
+#[cfg(not(target_arch = "bpf"))]
 #[test]
 fn memmove_forward_misaligned_aligned_start() {
     let mut arr = gen_arr::<32>();
