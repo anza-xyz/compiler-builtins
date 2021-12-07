@@ -8,7 +8,8 @@ if [ "$XARGO" = "1" ]; then
     echo nothing to do
 else
     if [ "$1" = "bpfel-unknown-unknown" ]; then
-        run="cargo run-bpf-tests --manifest-path testcrate/Cargo.toml"
+        export CARGO_TARGET_BPFEL_UNKNOWN_UNKNOWN_RUNNER=cargo-run-bpf-tests
+        run="cargo +bpf test --manifest-path testcrate/Cargo.toml --target $1"
         $run
     else
         run="cargo test --manifest-path testcrate/Cargo.toml --target $1"
@@ -92,7 +93,8 @@ rm -f $path
 # Verify that we haven't drop any intrinsic/symbol
 if [ "$1" = "bpfel-unknown-unknown" ]; then
     build_intrinsics="$cargo +bpf build --target $1 -v --example intrinsics"
-    RUSTFLAGS="-C debug-assertions=no" $build_intrinsics
+    # TODO Fix ld.lld: error: unable to find library -lc
+    #RUSTFLAGS="-C debug-assertions=no" $build_intrinsics
 else
     build_intrinsics="$cargo build --target $1 -v --example intrinsics"
     RUSTFLAGS="-C debug-assertions=no" $build_intrinsics
