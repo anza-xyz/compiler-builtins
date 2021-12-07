@@ -8,22 +8,22 @@ type c_int = i16;
 #[cfg(not(target_pointer_width = "16"))]
 type c_int = i32;
 
-#[cfg(not(target_arch = "bpf"))]
+#[cfg(not(any(target_arch = "bpf", target_arch = "sbf")))]
 use core::intrinsics::{atomic_load_unordered, atomic_store_unordered, exact_div};
-#[cfg(not(target_arch = "bpf"))]
+#[cfg(not(any(target_arch = "bpf", target_arch = "sbf")))]
 use core::mem;
-#[cfg(not(target_arch = "bpf"))]
+#[cfg(not(any(target_arch = "bpf", target_arch = "sbf")))]
 use core::ops::{BitOr, Shl};
 
 // memcpy/memmove/memset have optimized implementations on some architectures
-#[cfg(not(target_arch = "bpf"))]
+#[cfg(not(any(target_arch = "bpf", target_arch = "sbf")))]
 #[cfg_attr(
     all(not(feature = "no-asm"), target_arch = "x86_64"),
     path = "x86_64.rs"
 )]
 mod impls;
 
-#[cfg(not(target_arch = "bpf"))]
+#[cfg(not(any(target_arch = "bpf", target_arch = "sbf")))]
 #[cfg_attr(all(feature = "mem", not(feature = "mangled-names")), no_mangle)]
 #[cfg_attr(not(all(target_os = "windows", target_env = "gnu")), linkage = "weak")]
 pub unsafe extern "C" fn memcpy(dest: *mut u8, src: *const u8, n: usize) -> *mut u8 {
@@ -31,7 +31,7 @@ pub unsafe extern "C" fn memcpy(dest: *mut u8, src: *const u8, n: usize) -> *mut
     dest
 }
 
-#[cfg(not(target_arch = "bpf"))]
+#[cfg(not(any(target_arch = "bpf", target_arch = "sbf")))]
 #[cfg_attr(all(feature = "mem", not(feature = "mangled-names")), no_mangle)]
 #[cfg_attr(not(all(target_os = "windows", target_env = "gnu")), linkage = "weak")]
 pub unsafe extern "C" fn memmove(dest: *mut u8, src: *const u8, n: usize) -> *mut u8 {
@@ -46,7 +46,7 @@ pub unsafe extern "C" fn memmove(dest: *mut u8, src: *const u8, n: usize) -> *mu
     dest
 }
 
-#[cfg(not(target_arch = "bpf"))]
+#[cfg(not(any(target_arch = "bpf", target_arch = "sbf")))]
 #[cfg_attr(all(feature = "mem", not(feature = "mangled-names")), no_mangle)]
 #[cfg_attr(not(all(target_os = "windows", target_env = "gnu")), linkage = "weak")]
 pub unsafe extern "C" fn memset(s: *mut u8, c: c_int, n: usize) -> *mut u8 {
@@ -54,7 +54,7 @@ pub unsafe extern "C" fn memset(s: *mut u8, c: c_int, n: usize) -> *mut u8 {
     s
 }
 
-#[cfg(not(target_arch = "bpf"))]
+#[cfg(not(any(target_arch = "bpf", target_arch = "sbf")))]
 #[cfg_attr(all(feature = "mem", not(feature = "mangled-names")), no_mangle)]
 #[cfg_attr(not(all(target_os = "windows", target_env = "gnu")), linkage = "weak")]
 pub unsafe extern "C" fn memcmp(s1: *const u8, s2: *const u8, n: usize) -> i32 {
@@ -70,7 +70,7 @@ pub unsafe extern "C" fn memcmp(s1: *const u8, s2: *const u8, n: usize) -> i32 {
     0
 }
 
-#[cfg(not(target_arch = "bpf"))]
+#[cfg(not(any(target_arch = "bpf", target_arch = "sbf")))]
 #[cfg_attr(all(feature = "mem", not(feature = "mangled-names")), no_mangle)]
 #[cfg_attr(not(all(target_os = "windows", target_env = "gnu")), linkage = "weak")]
 pub unsafe extern "C" fn bcmp(s1: *const u8, s2: *const u8, n: usize) -> i32 {
@@ -78,7 +78,7 @@ pub unsafe extern "C" fn bcmp(s1: *const u8, s2: *const u8, n: usize) -> i32 {
 }
 
 // `bytes` must be a multiple of `mem::size_of::<T>()`
-#[cfg(not(target_arch = "bpf"))]
+#[cfg(not(any(target_arch = "bpf", target_arch = "sbf")))]
 #[cfg_attr(not(target_has_atomic_load_store = "8"), allow(dead_code))]
 fn memcpy_element_unordered_atomic<T: Copy>(dest: *mut T, src: *const T, bytes: usize) {
     unsafe {
@@ -92,7 +92,7 @@ fn memcpy_element_unordered_atomic<T: Copy>(dest: *mut T, src: *const T, bytes: 
 }
 
 // `bytes` must be a multiple of `mem::size_of::<T>()`
-#[cfg(not(target_arch = "bpf"))]
+#[cfg(not(any(target_arch = "bpf", target_arch = "sbf")))]
 #[cfg_attr(not(target_has_atomic_load_store = "8"), allow(dead_code))]
 fn memmove_element_unordered_atomic<T: Copy>(dest: *mut T, src: *const T, bytes: usize) {
     unsafe {
@@ -116,7 +116,7 @@ fn memmove_element_unordered_atomic<T: Copy>(dest: *mut T, src: *const T, bytes:
 }
 
 // `T` must be a primitive integer type, and `bytes` must be a multiple of `mem::size_of::<T>()`
-#[cfg(not(target_arch = "bpf"))]
+#[cfg(not(any(target_arch = "bpf", target_arch = "sbf")))]
 #[cfg_attr(not(target_has_atomic_load_store = "8"), allow(dead_code))]
 fn memset_element_unordered_atomic<T>(s: *mut T, c: u8, bytes: usize)
 where
@@ -143,7 +143,7 @@ where
     }
 }
 
-#[cfg(not(target_arch = "bpf"))]
+#[cfg(not(any(target_arch = "bpf", target_arch = "sbf")))]
 intrinsics! {
     #[cfg(target_has_atomic_load_store = "8")]
     pub extern "C" fn __llvm_memcpy_element_unordered_atomic_1(dest: *mut u8, src: *const u8, bytes: usize) -> () {
@@ -216,7 +216,7 @@ intrinsics! {
 // is performed in the run-time system instead, by calling the
 // corresponding "C" function.
 
-#[cfg(target_arch = "bpf")]
+#[cfg(any(target_arch = "bpf", target_arch = "sbf"))]
 extern "C" {
     fn sol_memcpy_(dest: *mut u8, src: *const u8, n: u64);
     fn sol_memmove_(dest: *mut u8, src: *const u8, n: u64);
@@ -224,7 +224,7 @@ extern "C" {
     fn sol_memcmp_(s1: *const u8, s2: *const u8, n: u64, result: *mut i32);
 }
 
-#[cfg(target_arch = "bpf")]
+#[cfg(any(target_arch = "bpf", target_arch = "sbf"))]
 #[cfg_attr(all(feature = "mem", not(feature = "mangled-names")), no_mangle)]
 #[inline]
 pub unsafe extern "C" fn memcpy(dest: *mut u8, src: *const u8, n: usize) -> *mut u8 {
@@ -251,7 +251,7 @@ pub unsafe extern "C" fn memcpy(dest: *mut u8, src: *const u8, n: usize) -> *mut
     dest
 }
 
-#[cfg(target_arch = "bpf")]
+#[cfg(any(target_arch = "bpf", target_arch = "sbf"))]
 #[cfg_attr(all(feature = "mem", not(feature = "mangled-names")), no_mangle)]
 #[inline]
 pub unsafe extern "C" fn memmove(dest: *mut u8, src: *const u8, n: usize) -> *mut u8 {
@@ -297,7 +297,7 @@ pub unsafe extern "C" fn memmove(dest: *mut u8, src: *const u8, n: usize) -> *mu
     dest
 }
 
-#[cfg(target_arch = "bpf")]
+#[cfg(any(target_arch = "bpf", target_arch = "sbf"))]
 #[cfg_attr(all(feature = "mem", not(feature = "mangled-names")), no_mangle)]
 #[inline]
 pub unsafe extern "C" fn memset(s: *mut u8, c: c_int, n: usize) -> *mut u8 {
@@ -327,7 +327,7 @@ pub unsafe extern "C" fn memset(s: *mut u8, c: c_int, n: usize) -> *mut u8 {
     s
 }
 
-#[cfg(target_arch = "bpf")]
+#[cfg(any(target_arch = "bpf", target_arch = "sbf"))]
 #[cfg_attr(all(feature = "mem", not(feature = "mangled-names")), no_mangle)]
 #[inline]
 pub unsafe extern "C" fn memcmp(s1: *const u8, s2: *const u8, n: usize) -> i32 {

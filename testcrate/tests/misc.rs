@@ -1,7 +1,7 @@
 // makes configuration easier
 #![allow(unused_macros)]
 
-#[cfg(not(target_arch = "bpf"))]
+#[cfg(not(any(target_arch = "bpf", target_arch = "sbf")))]
 use compiler_builtins::float::Float;
 use testcrate::*;
 
@@ -114,7 +114,7 @@ macro_rules! extend {
 
 // PowerPC tests are failing on LLVM 13: https://github.com/rust-lang/rust/issues/88520
 #[cfg(not(target_arch = "powerpc64"))]
-#[cfg(not(target_arch = "bpf"))]
+#[cfg(not(any(target_arch = "bpf", target_arch = "sbf")))]
 #[test]
 fn float_extend() {
     use compiler_builtins::float::extend::__extendsfdf2;
@@ -173,7 +173,8 @@ macro_rules! pow {
 
 #[cfg(not(any(
     all(target_arch = "x86", not(target_feature = "sse")),
-    target_arch = "bpf"
+    target_arch = "bpf",
+    target_arch = "sbf"
 )))]
 #[test]
 fn float_pow() {
