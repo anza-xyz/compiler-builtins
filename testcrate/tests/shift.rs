@@ -1,4 +1,4 @@
-#![cfg(not(target_arch = "bpf"))]
+#![cfg(not(any(target_arch = "bpf", target_arch = "sbf")))]
 
 use testcrate::*;
 

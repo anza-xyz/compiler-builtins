@@ -30,6 +30,7 @@ fn main() {
         || target.contains("-none")
         || target.contains("nvptx")
         || target.contains("bpf")
+        || target.contains("sbf")
     {
         println!("cargo:rustc-cfg=feature=\"mem\"");
     }
@@ -483,7 +484,7 @@ mod c {
             sources.remove(&["__aeabi_cdcmp", "__aeabi_cfcmp"]);
         }
 
-        if target_arch == "bpf" {
+        if target_arch == "bpf" || target_arch == "sbf" {
             cfg.define("__ELF__", None);
 
             // Add the 128 bit implementations
@@ -511,7 +512,7 @@ mod c {
                 ("__udivdi3", "udivdi3.c"),
                 ("__udivmoddi4", "udivmoddi4.c"),
                 ("__udivmodsi4", "udivmodsi4.c"),
-                ("__udivmodti4", "bpf/udivmodti4.c"),
+                ("__udivmodti4", "sbf/udivmodti4.c"),
                 ("__udivsi3", "udivsi3.c"),
                 ("__udivti3", "udivti3.c"),
                 ("__umoddi3", "umoddi3.c"),
