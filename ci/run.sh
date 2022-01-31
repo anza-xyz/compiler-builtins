@@ -7,8 +7,7 @@ if [ "$XARGO" = "1" ]; then
     # FIXME: currently these tests don't work...
     echo nothing to do
 else
-    if [ "$1" = "bpfel-unknown-unknown" ]; then
-        export CARGO_TARGET_BPFEL_UNKNOWN_UNKNOWN_RUNNER=cargo-run-bpf-tests
+    if [ "$1" = "sbf-solana-solana" ]; then
         run="cargo +bpf test --manifest-path testcrate/Cargo.toml --target $1"
         $run
     else
@@ -22,7 +21,7 @@ else
     fi
 fi
 
-if [ "$1" = "bpfel-unknown-unknown" ]; then
+if [ "$1" = "sbf-solana-solana" ]; then
     cargo +bpf build --target $1
     cargo +bpf build --target $1 --release
     cargo +bpf build --target $1 --features no-asm
@@ -61,6 +60,7 @@ else
 fi
 
 # Look out for duplicated symbols when we include the compiler-rt (C) implementation
+if [ "$1" != "sbf-solana-solana" ]; then
 for rlib in $(echo $path); do
     set +x
     echo "================================================================"
@@ -87,24 +87,22 @@ for rlib in $(echo $path); do
 
     set -ex
 done
+fi
 
 rm -f $path
 
 # Verify that we haven't drop any intrinsic/symbol
-if [ "$1" = "bpfel-unknown-unknown" ]; then
+if [ "$1" = "sbf-solana-solana" ]; then
     build_intrinsics="$cargo +bpf build --target $1 -v --example intrinsics"
     # TODO Fix ld.lld: error: unable to find library -lc
     #RUSTFLAGS="-C debug-assertions=no" $build_intrinsics
+    exit 0
 else
     build_intrinsics="$cargo build --target $1 -v --example intrinsics"
     RUSTFLAGS="-C debug-assertions=no" $build_intrinsics
     RUSTFLAGS="-C debug-assertions=no" $build_intrinsics --release
     RUSTFLAGS="-C debug-assertions=no" $build_intrinsics --features c
     RUSTFLAGS="-C debug-assertions=no" $build_intrinsics --features c --release
-fi
-
-if [ "$1" = "bpfel-unknown-unknown" ]; then
-    exit 0
 fi
 
 # Verify that there are no undefined symbols to `panic` within our

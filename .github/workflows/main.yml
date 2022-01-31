@@ -8,9 +8,6 @@ jobs:
     strategy:
       matrix:
         include:
-        - target: bpfel-unknown-unknown
-          os: macos-latest
-          rust: nightly
         - target: aarch64-unknown-linux-gnu
           os: ubuntu-latest
           rust: nightly
@@ -44,9 +41,12 @@ jobs:
         - target: powerpc64-unknown-linux-gnu
           os: ubuntu-latest
           rust: nightly
-#        - target: powerpc64le-unknown-linux-gnu
-#          os: ubuntu-latest
-#          rust: nightly
+        - target: powerpc64le-unknown-linux-gnu
+          os: ubuntu-latest
+          rust: nightly
+        - target: sbf-solana-solana
+          os: ubuntu-latest
+          rust: nightly
         - target: thumbv6m-none-eabi
           os: ubuntu-latest
           rust: nightly
@@ -88,7 +88,7 @@ jobs:
       run: rustup update ${{ matrix.rust }} --no-self-update && rustup default ${{ matrix.rust }}
       shell: bash
     - run: rustup target add ${{ matrix.target }}
-      if: matrix.target != 'bpfel-unknown-unknown'
+      if: matrix.target != 'sbf-solana-solana'
     - run: rustup component add llvm-tools-preview
     - name: Download compiler-rt reference sources
       run: |
@@ -96,14 +96,6 @@ jobs:
         tar xzf code.tar.gz --strip-components 1 llvm-project-rustc-13.0-2021-08-08/compiler-rt
         echo RUST_COMPILER_RT_ROOT=./compiler-rt >> $GITHUB_ENV
       shell: bash
-    - name: Install BPF tools
-      run: |
-        curl -L -o solana-bpf-tools-osx.tar.bz2 https://github.com/solana-labs/bpf-tools/releases/download/v1.20/solana-bpf-tools-osx.tar.bz2
-        mkdir -p ~/.cache/solana/v1.20/bpf-tools
-        tar -xjf solana-bpf-tools-osx.tar.bz2 --strip-components 1 -C ~/.cache/solana/v1.20/bpf-tools
-        rustup toolchain link bpf ~/.cache/solana/v1.20/bpf-tools/rust
-        cargo install --git https://github.com/solana-labs/cargo-run-bpf-tests.git
-      if: matrix.target == 'bpfel-unknown-unknown'
     # Non-linux tests just use our raw script
     - run: ./ci/run.sh ${{ matrix.target }}
       if: matrix.os != 'ubuntu-latest'

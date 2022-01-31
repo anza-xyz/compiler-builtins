@@ -204,6 +204,7 @@ macro_rules! trunc {
     };
 }
 
+#[cfg(not(any(target_arch = "bpf", target_arch = "sbf")))]
 #[test]
 fn float_trunc() {
     use compiler_builtins::float::trunc::__truncdfsf2;
