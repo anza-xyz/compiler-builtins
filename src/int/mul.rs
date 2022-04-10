@@ -1,3 +1,5 @@
+#![cfg(not(any(target_arch = "bpf", target_arch = "sbf")))]
+
 use int::{DInt, HInt, Int};
 
 trait Mul: DInt

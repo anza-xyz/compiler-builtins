@@ -1,3 +1,4 @@
+#![cfg(not(any(target_arch = "bpf", target_arch = "sbf")))]
 #![allow(unused_macros)]
 
 use compiler_builtins::int::sdiv::{__divmoddi4, __divmodsi4, __divmodti4};

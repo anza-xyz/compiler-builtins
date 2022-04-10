@@ -7,21 +7,33 @@ if [ "$XARGO" = "1" ]; then
     # FIXME: currently these tests don't work...
     echo nothing to do
 else
-    run="cargo test --manifest-path testcrate/Cargo.toml --target $1"
-    $run
-    $run --release
-    $run --features c
-    $run --features c --release
-    $run --features no-asm
-    $run --features no-asm --release
+    if [ "$1" = "sbf-solana-solana" ]; then
+        run="cargo +bpf test --manifest-path testcrate/Cargo.toml --target $1"
+        $run
+    else
+        run="cargo test --manifest-path testcrate/Cargo.toml --target $1"
+        $run
+        $run --release
+        $run --features c
+        $run --features c --release
+        $run --features no-asm
+        $run --features no-asm --release
+    fi
 fi
 
-cargo build --target $1
-cargo build --target $1 --release
-cargo build --target $1 --features c
-cargo build --target $1 --release --features c
-cargo build --target $1 --features no-asm
-cargo build --target $1 --release --features no-asm
+if [ "$1" = "sbf-solana-solana" ]; then
+    cargo +bpf build --target $1
+    cargo +bpf build --target $1 --release
+    cargo +bpf build --target $1 --features no-asm
+    cargo +bpf build --target $1 --release --features no-asm
+else
+    cargo build --target $1
+    cargo build --target $1 --release
+    cargo build --target $1 --features c
+    cargo build --target $1 --release --features c
+    cargo build --target $1 --features no-asm
+    cargo build --target $1 --release --features no-asm
+fi
 
 PREFIX=$(echo $1 | sed -e 's/unknown-//')-
 case $1 in
@@ -48,6 +60,7 @@ else
 fi
 
 # Look out for duplicated symbols when we include the compiler-rt (C) implementation
+if [ "$1" != "sbf-solana-solana" ]; then
 for rlib in $(echo $path); do
     set +x
     echo "================================================================"
@@ -74,15 +87,23 @@ for rlib in $(echo $path); do
 
     set -ex
 done
+fi
 
 rm -f $path
 
 # Verify that we haven't drop any intrinsic/symbol
-build_intrinsics="$cargo build --target $1 -v --example intrinsics"
-RUSTFLAGS="-C debug-assertions=no" $build_intrinsics
-RUSTFLAGS="-C debug-assertions=no" $build_intrinsics --release
-RUSTFLAGS="-C debug-assertions=no" $build_intrinsics --features c
-RUSTFLAGS="-C debug-assertions=no" $build_intrinsics --features c --release
+if [ "$1" = "sbf-solana-solana" ]; then
+    build_intrinsics="$cargo +bpf build --target $1 -v --example intrinsics"
+    # TODO Fix ld.lld: error: unable to find library -lc
+    #RUSTFLAGS="-C debug-assertions=no" $build_intrinsics
+    exit 0
+else
+    build_intrinsics="$cargo build --target $1 -v --example intrinsics"
+    RUSTFLAGS="-C debug-assertions=no" $build_intrinsics
+    RUSTFLAGS="-C debug-assertions=no" $build_intrinsics --release
+    RUSTFLAGS="-C debug-assertions=no" $build_intrinsics --features c
+    RUSTFLAGS="-C debug-assertions=no" $build_intrinsics --features c --release
+fi
 
 # Verify that there are no undefined symbols to `panic` within our
 # implementations
