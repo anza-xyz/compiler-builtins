@@ -4,7 +4,6 @@
 #![cfg_attr(not(feature = "no-asm"), feature(global_asm))]
 #![feature(cfg_target_has_atomic)]
 #![feature(compiler_builtins)]
-#![feature(core_ffi_c)]
 #![feature(core_intrinsics)]
 #![feature(inline_const)]
 #![feature(lang_items)]
@@ -46,8 +45,10 @@ pub mod int;
     all(target_family = "wasm", target_os = "unknown"),
     all(target_arch = "x86_64", target_os = "uefi"),
     all(target_arch = "arm", target_os = "none"),
+    all(target_vendor = "fortanix", target_env = "sgx"),
     target_os = "xous",
-    all(target_vendor = "fortanix", target_env = "sgx")
+    target_arch = "bpf",
+    target_arch = "sbf"
 ))]
 pub mod math;
 pub mod mem;
