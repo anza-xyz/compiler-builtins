@@ -140,7 +140,9 @@ pub unsafe fn compare_bytes(a: *const u8, b: *const u8, n: usize) -> i32 {
         F: FnOnce(*const U, *const U, usize) -> i32,
     {
         // Ensure T is not a ZST.
-        const { assert!(mem::size_of::<T>() != 0) };
+        const {
+            assert!(mem::size_of::<T>() != 0);
+        };
 
         let end = a.add(intrinsics::unchecked_div(n, mem::size_of::<T>()));
         while a != end {
