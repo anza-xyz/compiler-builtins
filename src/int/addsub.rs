@@ -1,4 +1,4 @@
-#![cfg(not(any(target_arch = "bpf", target_arch = "sbf")))]
+#![cfg(not(target_os = "solana"))]
 
 use int::{DInt, Int};
 
