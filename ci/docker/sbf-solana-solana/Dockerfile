@@ -9,7 +9,7 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y -v -
 RUN cp ${HOME}/.cargo/bin/* /usr/local/bin/
 
 RUN cargo install --git https://github.com/solana-labs/cargo-run-bpf-tests.git \
-    --rev f05ff4b9d973481809037a080932c0d6fade879f \
+    --rev e8665960ba4582ab4b801edfcbed914ccf1bccb0 \
     --bin cargo-run-bpf-tests --root /usr/local
 
 RUN mkdir -p /tmp/.cache/solana/v1.26/bpf-tools
