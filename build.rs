@@ -30,8 +30,6 @@ fn main() {
         || target.contains("-none")
         || target.contains("nvptx")
         || target.contains("uefi")
-        || target.contains("bpf")
-        || target.contains("sbf")
     {
         println!("cargo:rustc-cfg=feature=\"mem\"");
     }
@@ -41,6 +39,7 @@ fn main() {
         || target.contains("i686")
         || target.contains("aarch64")
         || target.contains("bpf")
+        || target.contains("sbf")
     {
         println!("cargo:rustc-cfg=feature=\"mem-unaligned\"");
     }
@@ -496,7 +495,7 @@ mod c {
             cfg.define("LONG_BIT", "(8 * sizeof(long))");
         }
 
-        if target_arch == "bpf" || target_arch == "sbf" {
+        if target_os == "solana" {
             cfg.define("__ELF__", None);
 
             // Use the static-syscall target feature to detect if we're

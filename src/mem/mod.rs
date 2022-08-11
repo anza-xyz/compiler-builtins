@@ -8,22 +8,22 @@ type c_int = i16;
 #[cfg(not(target_pointer_width = "16"))]
 type c_int = i32;
 
-#[cfg(not(any(target_arch = "bpf", target_arch = "sbf")))]
+#[cfg(not(target_os = "solana"))]
 use core::intrinsics::{atomic_load_unordered, atomic_store_unordered, exact_div};
-#[cfg(not(any(target_arch = "bpf", target_arch = "sbf")))]
+#[cfg(not(target_os = "solana"))]
 use core::mem;
-#[cfg(not(any(target_arch = "bpf", target_arch = "sbf")))]
+#[cfg(not(target_os = "solana"))]
 use core::ops::{BitOr, Shl};
 
 // memcpy/memmove/memset have optimized implementations on some architectures
-#[cfg(not(any(target_arch = "bpf", target_arch = "sbf")))]
+#[cfg(not(target_os = "solana"))]
 #[cfg_attr(
     all(not(feature = "no-asm"), target_arch = "x86_64"),
     path = "x86_64.rs"
 )]
 mod impls;
 
-#[cfg(all(not(target_arch = "bpf"), not(target_arch = "sbf")))]
+#[cfg(not(target_os = "solana"))]
 intrinsics! {
     #[mem_builtin]
     #[cfg_attr(not(all(target_os = "windows", target_env = "gnu")), linkage = "weak")]
@@ -79,7 +79,7 @@ intrinsics! {
 }
 
 // `bytes` must be a multiple of `mem::size_of::<T>()`
-#[cfg(all(not(target_arch = "bpf"), not(target_arch = "sbf")))]
+#[cfg(not(target_os = "solana"))]
 #[cfg_attr(not(target_has_atomic_load_store = "8"), allow(dead_code))]
 fn memcpy_element_unordered_atomic<T: Copy>(dest: *mut T, src: *const T, bytes: usize) {
     unsafe {
@@ -93,7 +93,7 @@ fn memcpy_element_unordered_atomic<T: Copy>(dest: *mut T, src: *const T, bytes: 
 }
 
 // `bytes` must be a multiple of `mem::size_of::<T>()`
-#[cfg(all(not(target_arch = "bpf"), not(target_arch = "sbf")))]
+#[cfg(not(target_os = "solana"))]
 #[cfg_attr(not(target_has_atomic_load_store = "8"), allow(dead_code))]
 fn memmove_element_unordered_atomic<T: Copy>(dest: *mut T, src: *const T, bytes: usize) {
     unsafe {
@@ -117,7 +117,7 @@ fn memmove_element_unordered_atomic<T: Copy>(dest: *mut T, src: *const T, bytes:
 }
 
 // `T` must be a primitive integer type, and `bytes` must be a multiple of `mem::size_of::<T>()`
-#[cfg(all(not(target_arch = "bpf"), not(target_arch = "sbf")))]
+#[cfg(not(target_os = "solana"))]
 #[cfg_attr(not(target_has_atomic_load_store = "8"), allow(dead_code))]
 fn memset_element_unordered_atomic<T>(s: *mut T, c: u8, bytes: usize)
 where
@@ -144,7 +144,7 @@ where
     }
 }
 
-#[cfg(all(not(target_arch = "bpf"), not(target_arch = "sbf")))]
+#[cfg(not(target_os = "solana"))]
 intrinsics! {
     #[cfg(target_has_atomic_load_store = "8")]
     pub unsafe extern "C" fn __llvm_memcpy_element_unordered_atomic_1(dest: *mut u8, src: *const u8, bytes: usize) -> () {
@@ -217,10 +217,7 @@ intrinsics! {
 // is performed in the run-time system instead, by calling the
 // corresponding "C" function.
 
-#[cfg(all(
-    any(target_arch = "bpf", target_arch = "sbf"),
-    not(target_feature = "static-syscalls")
-))]
+#[cfg(all(target_os = "solana", not(target_feature = "static-syscalls")))]
 mod syscalls {
     extern "C" {
         pub fn sol_memcpy_(dest: *mut u8, src: *const u8, n: u64);
@@ -230,10 +227,7 @@ mod syscalls {
     }
 }
 
-#[cfg(all(
-    any(target_arch = "bpf", target_arch = "sbf"),
-    target_feature = "static-syscalls"
-))]
+#[cfg(all(target_os = "solana", target_feature = "static-syscalls"))]
 mod syscalls {
     pub(crate) fn sol_memcpy_(dest: *mut u8, src: *const u8, n: u64) {
         let syscall: extern "C" fn(*mut u8, *const u8, u64) =
@@ -260,13 +254,13 @@ mod syscalls {
     }
 }
 
-#[cfg(any(target_arch = "bpf", target_arch = "sbf"))]
+#[cfg(target_os = "solana")]
 use self::syscalls::*;
 
-#[cfg(any(target_arch = "bpf", target_arch = "sbf"))]
+#[cfg(target_os = "solana")]
 const NSTORE_THRESHOLD: usize = 15;
 
-#[cfg(any(target_arch = "bpf", target_arch = "sbf"))]
+#[cfg(target_os = "solana")]
 #[cfg_attr(all(feature = "mem", not(feature = "mangled-names")), no_mangle)]
 #[inline]
 pub unsafe extern "C" fn memcpy(dest: *mut u8, src: *const u8, n: usize) -> *mut u8 {
@@ -293,7 +287,7 @@ pub unsafe extern "C" fn memcpy(dest: *mut u8, src: *const u8, n: usize) -> *mut
     dest
 }
 
-#[cfg(any(target_arch = "bpf", target_arch = "sbf"))]
+#[cfg(target_os = "solana")]
 #[cfg_attr(all(feature = "mem", not(feature = "mangled-names")), no_mangle)]
 #[inline]
 pub unsafe extern "C" fn memmove(dest: *mut u8, src: *const u8, n: usize) -> *mut u8 {
@@ -339,7 +333,7 @@ pub unsafe extern "C" fn memmove(dest: *mut u8, src: *const u8, n: usize) -> *mu
     dest
 }
 
-#[cfg(any(target_arch = "bpf", target_arch = "sbf"))]
+#[cfg(target_os = "solana")]
 #[cfg_attr(all(feature = "mem", not(feature = "mangled-names")), no_mangle)]
 #[inline]
 pub unsafe extern "C" fn memset(s: *mut u8, c: c_int, n: usize) -> *mut u8 {
@@ -369,7 +363,7 @@ pub unsafe extern "C" fn memset(s: *mut u8, c: c_int, n: usize) -> *mut u8 {
     s
 }
 
-#[cfg(any(target_arch = "bpf", target_arch = "sbf"))]
+#[cfg(target_os = "solana")]
 #[cfg_attr(all(feature = "mem", not(feature = "mangled-names")), no_mangle)]
 #[inline]
 pub unsafe extern "C" fn memcmp(s1: *const u8, s2: *const u8, n: usize) -> i32 {

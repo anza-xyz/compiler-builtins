@@ -46,9 +46,8 @@ pub mod int;
     all(target_arch = "x86_64", target_os = "uefi"),
     all(target_arch = "arm", target_os = "none"),
     all(target_vendor = "fortanix", target_env = "sgx"),
-    target_os = "xous",
-    target_arch = "bpf",
-    target_arch = "sbf"
+    target_os = "solana",
+    target_os = "xous"
 ))]
 pub mod math;
 pub mod mem;
