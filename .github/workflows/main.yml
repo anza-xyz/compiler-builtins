@@ -44,6 +44,9 @@ jobs:
         - target: powerpc64le-unknown-linux-gnu
           os: ubuntu-latest
           rust: nightly
+        - target: sbf-solana-solana
+          os: ubuntu-latest
+          rust: nightly
         - target: thumbv6m-none-eabi
           os: ubuntu-latest
           rust: nightly
@@ -85,6 +88,7 @@ jobs:
       run: rustup update ${{ matrix.rust }} --no-self-update && rustup default ${{ matrix.rust }}
       shell: bash
     - run: rustup target add ${{ matrix.target }}
+      if: matrix.target != 'sbf-solana-solana'
     - run: rustup component add llvm-tools-preview
     - name: Download compiler-rt reference sources
       run: |
