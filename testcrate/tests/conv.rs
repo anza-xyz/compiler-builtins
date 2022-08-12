@@ -1,3 +1,4 @@
+#![cfg(not(target_os = "solana"))]
 use testcrate::*;
 
 macro_rules! i_to_f {
