@@ -133,7 +133,10 @@ macro_rules! pow {
     };
 }
 
-#[cfg(not(all(target_arch = "x86", not(target_feature = "sse"))))]
+#[cfg(not(any(
+    all(target_arch = "x86", not(target_feature = "sse")),
+    target_os = "solana"
+)))]
 #[test]
 fn float_pow() {
     use compiler_builtins::float::pow::{__powidf2, __powisf2};
