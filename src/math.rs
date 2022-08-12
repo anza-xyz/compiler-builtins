@@ -21,6 +21,7 @@ macro_rules! no_mangle {
         target_os = "unknown",
         not(target_env = "wasi")
     ),
+    target_os = "solana",
     target_os = "xous",
     target_os = "uefi",
     all(target_arch = "xtensa", target_os = "none"),
@@ -126,6 +127,7 @@ no_mangle! {
 #[cfg(any(
     all(target_vendor = "fortanix", target_env = "sgx"),
     all(target_arch = "xtensa", target_os = "none"),
+    target_os = "solana",
     target_os = "xous",
     target_os = "uefi"
 ))]
@@ -154,4 +156,10 @@ no_mangle! {
     fn fmod(x: f64, y: f64) -> f64;
     // `f32 % f32`
     fn fmodf(x: f32, y: f32) -> f32;
+}
+
+#[cfg(target_os = "solana")]
+no_mangle! {
+    fn sqrt(x: f64) -> f64;
+    fn sqrtf(x: f32) -> f32;
 }
