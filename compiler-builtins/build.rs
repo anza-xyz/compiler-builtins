@@ -52,6 +52,7 @@ fn main() {
         || target.arch.contains("x86")
         || target.arch.contains("aarch64")
         || target.arch.contains("bpf")
+        || target.arch.contains("sbf")
     {
         println!("cargo:rustc-cfg=feature=\"mem-unaligned\"");
     }
@@ -301,7 +302,10 @@ mod c {
     }
 
     /// Compile intrinsics from the compiler-rt C source code
-    pub fn compile(llvm_target: &[&str], target: &Target) {
+    pub fn compile(llvm_target: &[&str], target: &String) {
+        let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap();
+        let target_feature = env::var("CARGO_CFG_TARGET_FEATURE").unwrap_or_default();
+
         let mut consider_float_intrinsics = true;
         let cfg = &mut cc::Build::new();
 
@@ -607,6 +611,23 @@ mod c {
         // OpenHarmony also uses emulated TLS.
         if target.env == "ohos" {
             sources.extend(&[("__emutls_get_address", "emutls.c")]);
+        }
+
+        if target_os == "solana" {
+            cfg.define("__ELF__", None);
+            // Use the static-syscall target feature to detect if we're
+            // compiling for sbfv2, in which case set the corresponding clang
+            // cpu flag.
+            if target_feature.contains("static-syscalls") {
+                cfg.flag("-mcpu=sbfv2");
+            }
+            // Remove the implementations that fail to build.
+            // This list should shrink to zero
+            sources.remove(&[
+                "__int_util", // Unsupported architecture error
+                "__mulvdi3",  // Unsupported signed division
+                "__mulvsi3",  // Unsupported signed division
+            ]);
         }
 
         // When compiling the C code we require the user to tell us where the
