@@ -39,6 +39,7 @@ fn main() {
         || target.contains("i686")
         || target.contains("aarch64")
         || target.contains("bpf")
+        || target.contains("sbf")
     {
         println!("cargo:rustc-cfg=feature=\"mem-unaligned\"");
     }
@@ -147,6 +148,7 @@ mod c {
         let target_env = env::var("CARGO_CFG_TARGET_ENV").unwrap();
         let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap();
         let target_vendor = env::var("CARGO_CFG_TARGET_VENDOR").unwrap();
+        let target_feature = env::var("CARGO_CFG_TARGET_FEATURE").unwrap_or_default();
         let mut consider_float_intrinsics = true;
         let cfg = &mut cc::Build::new();
 
@@ -490,6 +492,23 @@ mod c {
             // https://r.android.com/2038949 which will be released in a future
             // NDK version) by providing a definition of LONG_BIT.
             cfg.define("LONG_BIT", "(8 * sizeof(long))");
+        }
+
+        if target_os == "solana" {
+            cfg.define("__ELF__", None);
+            // Use the static-syscall target feature to detect if we're
+            // compiling for sbfv2, in which case set the corresponding clang
+            // cpu flag.
+            if target_arch == "sbf" && target_feature.contains("static-syscalls") {
+                cfg.flag("-mcpu=sbfv2");
+            }
+            // Remove the implementations that fail to build.
+            // This list should shrink to zero
+            sources.remove(&[
+                "__int_util", // Unsupported architecture error
+                "__mulvdi3",  // Unsupported signed division
+                "__mulvsi3",  // Unsupported signed division
+            ]);
         }
 
         // When compiling the C code we require the user to tell us where the

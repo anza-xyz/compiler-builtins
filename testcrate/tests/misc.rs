@@ -1,6 +1,7 @@
 // makes configuration easier
 #![allow(unused_macros)]
 
+#[cfg(not(target_os = "solana"))]
 use compiler_builtins::float::Float;
 use testcrate::*;
 
@@ -112,7 +113,7 @@ macro_rules! extend {
 }
 
 // PowerPC tests are failing on LLVM 13: https://github.com/rust-lang/rust/issues/88520
-#[cfg(not(target_arch = "powerpc64"))]
+#[cfg(not(any(target_arch = "powerpc64", target_os = "solana")))]
 #[test]
 fn float_extend() {
     use compiler_builtins::float::extend::__extendsfdf2;
@@ -169,7 +170,10 @@ macro_rules! pow {
     };
 }
 
-#[cfg(not(all(target_arch = "x86", not(target_feature = "sse"))))]
+#[cfg(not(any(
+    all(target_arch = "x86", not(target_feature = "sse")),
+    target_os = "solana"
+)))]
 #[test]
 fn float_pow() {
     use compiler_builtins::float::pow::{__powidf2, __powisf2};
@@ -198,6 +202,7 @@ macro_rules! trunc {
     };
 }
 
+#[cfg(not(target_os = "solana"))]
 #[test]
 fn float_trunc() {
     use compiler_builtins::float::trunc::__truncdfsf2;
