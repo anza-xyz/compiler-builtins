@@ -82,4 +82,12 @@ pub mod x86;
 #[cfg(target_arch = "x86_64")]
 pub mod x86_64;
 
+#[cfg(all(target_os = "solana", target_feature = "static-syscalls"))]
+#[cfg_attr(not(feature = "mangled-names"), no_mangle)]
+#[linkage = "weak"]
+pub unsafe extern "C" fn abort() -> ! {
+    let syscall: extern "C" fn() -> ! = core::mem::transmute(3069975057u64); // murmur32 hash of "abort"
+    syscall()
+}
+
 pub mod probestack;

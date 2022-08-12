@@ -62,7 +62,8 @@ mod int_to_float {
                         if f0 != f1 && !cfg!(any(
                             target_arch = "x86",
                             target_arch = "powerpc",
-                            target_arch = "powerpc64"
+                            target_arch = "powerpc64",
+                            target_family = "solana"
                         )) {
                             panic!(
                                 "{}({}): std: {}, builtins: {}",

@@ -143,6 +143,10 @@ macro_rules! float {
 mod float_div {
     use super::*;
 
+    #[cfg(not(any(
+        all(target_arch = "x86", not(target_feature = "sse")),
+        target_family = "solana"
+    )))]
     float! {
         f32, __divsf3, Single, all();
         f64, __divdf3, Double, all();

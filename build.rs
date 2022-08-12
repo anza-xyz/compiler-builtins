@@ -51,6 +51,7 @@ fn main() {
         || target.arch.contains("x86")
         || target.arch.contains("aarch64")
         || target.arch.contains("bpf")
+        || target.arch.contains("sbf")
     {
         println!("cargo:rustc-cfg=feature=\"mem-unaligned\"");
     }
@@ -596,6 +597,23 @@ mod c {
         // OpenHarmony also uses emulated TLS.
         if target.env == "ohos" {
             sources.extend(&[("__emutls_get_address", "emutls.c")]);
+        }
+
+        if target.os == "solana" {
+            cfg.define("__ELF__", None);
+            // Use the static-syscall target feature to detect if we're
+            // compiling for sbfv2, in which case set the corresponding clang
+            // cpu flag.
+            if target.features.iter().any(|el| el == "static-syscalls") {
+                cfg.flag("-mcpu=sbfv2");
+            }
+            // Remove the implementations that fail to build.
+            // This list should shrink to zero
+            sources.remove(&[
+                "__int_util", // Unsupported architecture error
+                "__mulvdi3",  // Unsupported signed division
+                "__mulvsi3",  // Unsupported signed division
+            ]);
         }
 
         // When compiling the C code we require the user to tell us where the
