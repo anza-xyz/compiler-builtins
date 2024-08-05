@@ -70,6 +70,8 @@ rustc-dep-of-std = ['compiler-builtins', 'core']
 # are not normally public but are required by the `testcrate`
 public-test-deps = []
 
+weak-intrinsics = []
+
 [[example]]
 name = "intrinsics"
 required-features = ["compiler-builtins"]
