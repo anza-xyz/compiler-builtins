@@ -39,7 +39,7 @@ cc = { optional = true, version = "1.0" }
 panic-handler = { path = 'crates/panic-handler' }
 
 [features]
-default = ["compiler-builtins"]
+default = ["compiler-builtins", "no-f16-f128"]
 
 # Enable compilation of C code in compiler-rt, filling in some more optimized
 # implementations and also filling in unimplemented intrinsics
