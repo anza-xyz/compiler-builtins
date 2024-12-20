@@ -43,8 +43,8 @@ rm -f $rlib_paths
 
 cargo build --target "$target"
 cargo build --target "$target" --release
-# cargo build --target "$target" --features c
-# cargo build --target "$target" --release --features c
+cargo build --target "$target" --features c
+cargo build --target "$target" --release --features c
 cargo build --target "$target" --features no-asm
 cargo build --target "$target" --release --features no-asm
 cargo build --target "$target" --features no-f16-f128
@@ -108,8 +108,8 @@ build_intrinsics() {
 # Verify that we haven't drop any intrinsic/symbol
 build_intrinsics
 build_intrinsics --release
-# build_intrinsics --features c
-# build_intrinsics --features c --release
+build_intrinsics --features c
+build_intrinsics --features c --release
 
 # Verify that there are no undefined symbols to `panic` within our
 # implementations
