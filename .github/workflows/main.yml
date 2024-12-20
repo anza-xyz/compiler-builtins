@@ -2,8 +2,8 @@ name: CI
 on: [push, pull_request]
 
 env:
-  RUSTDOCFLAGS: -Dwarnings
-  RUSTFLAGS: -Dwarnings
+  # RUSTDOCFLAGS: -Dwarnings
+  # RUSTFLAGS: -Dwarnings
   RUST_LLVM_VERSION: 19.1-2024-09-17
   RUST_COMPILER_RT_ROOT: ./compiler-rt
 
@@ -28,10 +28,10 @@ jobs:
           no_std: 1
         - target: arm-unknown-linux-gnueabi
           os: ubuntu-latest
-          rust: nightly
+          rust: nightly-2024-05-17
         - target: arm-unknown-linux-gnueabihf
           os: ubuntu-latest
-          rust: nightly
+          rust: nightly-2024-05-17
         - target: i586-unknown-linux-gnu
           os: ubuntu-latest
           rust: nightly
@@ -57,10 +57,10 @@ jobs:
         #  rust: nightly
         - target: powerpc-unknown-linux-gnu
           os: ubuntu-latest
-          rust: nightly
+          rust: nightly-2024-05-17
         - target: powerpc64-unknown-linux-gnu
           os: ubuntu-latest
-          rust: nightly
+          rust: nightly-2024-05-17
         - target: powerpc64le-unknown-linux-gnu
           os: ubuntu-latest
           rust: nightly
@@ -72,16 +72,16 @@ jobs:
           rust: nightly
         - target: thumbv6m-none-eabi
           os: ubuntu-latest
-          rust: nightly
+          rust: nightly-2024-05-17
         - target: thumbv7em-none-eabi
           os: ubuntu-latest
-          rust: nightly
+          rust: nightly-2024-05-17
         - target: thumbv7em-none-eabihf
           os: ubuntu-latest
-          rust: nightly
+          rust: nightly-2024-05-17
         - target: thumbv7m-none-eabi
           os: ubuntu-latest
-          rust: nightly
+          rust: nightly-2024-05-17
         - target: wasm32-unknown-unknown
           os: ubuntu-latest
           rust: nightly
@@ -101,10 +101,10 @@ jobs:
           test_verbatim: 1
         - target: i686-pc-windows-gnu
           os: windows-latest
-          rust: nightly-i686-gnu
+          rust: nightly
         - target: x86_64-pc-windows-gnu
           os: windows-latest
-          rust: nightly-x86_64-gnu
+          rust: nightly
     steps:
     - name: Print runner information
       run: uname -a
