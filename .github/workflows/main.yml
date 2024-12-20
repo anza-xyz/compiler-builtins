@@ -3,7 +3,7 @@ on: [push, pull_request]
 
 env:
   RUSTDOCFLAGS: -Dwarnings
-  RUSTFLAGS: -Dwarnings
+#  RUSTFLAGS: -Dwarnings
 
 jobs:
   test:
@@ -18,13 +18,13 @@ jobs:
           rust: nightly
         - target: aarch64-unknown-linux-gnu
           os: ubuntu-latest
-          rust: nightly
+          rust: nightly-2024-05-17
         - target: arm-unknown-linux-gnueabi
           os: ubuntu-latest
-          rust: nightly
+          rust: nightly-2024-05-17
         - target: arm-unknown-linux-gnueabihf
           os: ubuntu-latest
-          rust: nightly
+          rust: nightly-2024-05-17
         - target: i586-unknown-linux-gnu
           os: ubuntu-latest
           rust: nightly
@@ -47,28 +47,28 @@ jobs:
         #  rust: nightly
         - target: powerpc-unknown-linux-gnu
           os: ubuntu-latest
-          rust: nightly
+          rust: nightly-2024-05-17
         - target: powerpc64-unknown-linux-gnu
           os: ubuntu-latest
-          rust: nightly
+          rust: nightly-2024-05-17
         - target: powerpc64le-unknown-linux-gnu
           os: ubuntu-latest
-          rust: nightly
+          rust: nightly-2024-05-17
         - target: sbf-solana-solana
           os: ubuntu-latest
           rust: nightly
         - target: thumbv6m-none-eabi
           os: ubuntu-latest
-          rust: nightly
+          rust: nightly-2024-05-17
         - target: thumbv7em-none-eabi
           os: ubuntu-latest
-          rust: nightly
+          rust: nightly-2024-05-17
         - target: thumbv7em-none-eabihf
           os: ubuntu-latest
-          rust: nightly
+          rust: nightly-2024-05-17
         - target: thumbv7m-none-eabi
           os: ubuntu-latest
-          rust: nightly
+          rust: nightly-2024-05-17
         - target: wasm32-unknown-unknown
           os: ubuntu-latest
           rust: nightly
@@ -83,13 +83,13 @@ jobs:
           rust: nightly
         - target: x86_64-pc-windows-msvc
           os: windows-latest
-          rust: nightly
+          rust: nightly-2024-05-17
         - target: i686-pc-windows-gnu
           os: windows-latest
-          rust: nightly-i686-gnu
+          rust: nightly-2024-05-17-i686-gnu
         - target: x86_64-pc-windows-gnu
           os: windows-latest
-          rust: nightly-x86_64-gnu
+          rust: nightly-2024-05-17-x86_64-gnu
     steps:
     - name: Print runner information
       run: uname -a

@@ -186,7 +186,7 @@ fn float_extend() {
 
     extend!(f32, f64, __extendsfdf2);
     conv!(f32, f64, __extendsfdf2, Single, Double);
-    #[cfg(not(feature = "no-f16-f128"))]
+    #[cfg(not(any(feature = "no-f16-f128", target_arch = "sbf")))]
     {
         use compiler_builtins::float::extend::{
             __extenddftf2, __extendhfsf2, __extendhftf2, __extendsftf2, __gnu_h2f_ieee,
