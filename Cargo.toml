@@ -84,3 +84,6 @@ panic = 'abort'
 
 [profile.dev]
 panic = 'abort'
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_family, values("solana"))', 'cfg(target_feature, values("static-syscalls"))', 'cfg(target_os, values("solana"))'] }
