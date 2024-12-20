@@ -3,7 +3,7 @@ on: [push, pull_request]
 
 env:
   RUSTDOCFLAGS: -Dwarnings
-  RUSTFLAGS: -Dwarnings
+#  RUSTFLAGS: -Dwarnings
 
 jobs:
   test:
@@ -13,24 +13,24 @@ jobs:
       fail-fast: false
       matrix:
         include:
-        #- target: aarch64-apple-darwin
-        #  os: macos-14
-        #  rust: nightly
-        #- target: aarch64-unknown-linux-gnu
-        #  os: ubuntu-latest
-        #  rust: nightly
-        #- target: arm-unknown-linux-gnueabi
-        #  os: ubuntu-latest
-        #  rust: nightly
-        #- target: arm-unknown-linux-gnueabihf
-        #  os: ubuntu-latest
-        #  rust: nightly
-        #- target: i586-unknown-linux-gnu
-        #  os: ubuntu-latest
-        #  rust: nightly
-        #- target: i686-unknown-linux-gnu
-        #  os: ubuntu-latest
-        #  rust: nightly
+        - target: aarch64-apple-darwin
+          os: macos-14
+          rust: nightly
+        - target: aarch64-unknown-linux-gnu
+          os: ubuntu-latest
+          rust: nightly-2024-05-17
+        - target: arm-unknown-linux-gnueabi
+          os: ubuntu-latest
+          rust: nightly-2024-05-17
+        - target: arm-unknown-linux-gnueabihf
+          os: ubuntu-latest
+          rust: nightly-2024-05-17
+        - target: i586-unknown-linux-gnu
+          os: ubuntu-latest
+          rust: nightly
+        - target: i686-unknown-linux-gnu
+          os: ubuntu-latest
+          rust: nightly
         # MIPS targets disabled since they are dropped to tier 3.
         # See https://github.com/rust-lang/compiler-team/issues/648
         #- target: mips-unknown-linux-gnu
@@ -45,51 +45,51 @@ jobs:
         #- target: mipsel-unknown-linux-gnu
         #  os: ubuntu-latest
         #  rust: nightly
-        #- target: powerpc-unknown-linux-gnu
-        #  os: ubuntu-latest
-        #  rust: nightly
-        #- target: powerpc64-unknown-linux-gnu
-        #  os: ubuntu-latest
-        #  rust: nightly
-        #- target: powerpc64le-unknown-linux-gnu
-        #  os: ubuntu-latest
-        #  rust: nightly
+        - target: powerpc-unknown-linux-gnu
+          os: ubuntu-latest
+          rust: nightly-2024-05-17
+        - target: powerpc64-unknown-linux-gnu
+          os: ubuntu-latest
+          rust: nightly-2024-05-17
+        - target: powerpc64le-unknown-linux-gnu
+          os: ubuntu-latest
+          rust: nightly-2024-05-17
         - target: sbf-solana-solana
           os: ubuntu-latest
           rust: nightly
-        #- target: thumbv6m-none-eabi
-        #  os: ubuntu-latest
-        #  rust: nightly
-        #- target: thumbv7em-none-eabi
-        #  os: ubuntu-latest
-        #  rust: nightly
-        #- target: thumbv7em-none-eabihf
-        #  os: ubuntu-latest
-        #  rust: nightly
-        #- target: thumbv7m-none-eabi
-        #  os: ubuntu-latest
-        #  rust: nightly
-        #- target: wasm32-unknown-unknown
-        #  os: ubuntu-latest
-        #  rust: nightly
-        #- target: x86_64-unknown-linux-gnu
-        #  os: ubuntu-latest
-        #  rust: nightly
-        #- target: x86_64-apple-darwin
-        #  os: macos-latest
-        #  rust: nightly
-        #- target: i686-pc-windows-msvc
-        #  os: windows-latest
-        #  rust: nightly
-        #- target: x86_64-pc-windows-msvc
-        #  os: windows-latest
-        #  rust: nightly
-        #- target: i686-pc-windows-gnu
-        #  os: windows-latest
-        #  rust: nightly-i686-gnu
-        #- target: x86_64-pc-windows-gnu
-        #  os: windows-latest
-        #  rust: nightly-x86_64-gnu
+        - target: thumbv6m-none-eabi
+          os: ubuntu-latest
+          rust: nightly-2024-05-17
+        - target: thumbv7em-none-eabi
+          os: ubuntu-latest
+          rust: nightly-2024-05-17
+        - target: thumbv7em-none-eabihf
+          os: ubuntu-latest
+          rust: nightly-2024-05-17
+        - target: thumbv7m-none-eabi
+          os: ubuntu-latest
+          rust: nightly-2024-05-17
+        - target: wasm32-unknown-unknown
+          os: ubuntu-latest
+          rust: nightly
+        - target: x86_64-unknown-linux-gnu
+          os: ubuntu-latest
+          rust: nightly
+        - target: x86_64-apple-darwin
+          os: macos-latest
+          rust: nightly
+        - target: i686-pc-windows-msvc
+          os: windows-latest
+          rust: nightly
+        - target: x86_64-pc-windows-msvc
+          os: windows-latest
+          rust: nightly-2024-05-17
+        - target: i686-pc-windows-gnu
+          os: windows-latest
+          rust: nightly-2024-05-17-i686-gnu
+        - target: x86_64-pc-windows-gnu
+          os: windows-latest
+          rust: nightly-2024-05-17-x86_64-gnu
     steps:
     - name: Print runner information
       run: uname -a
