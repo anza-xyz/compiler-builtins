@@ -15,7 +15,7 @@ jobs:
         include:
         - target: aarch64-apple-darwin
           os: macos-14
-          rust: nightly
+          rust: nightly-2024-05-17
         - target: aarch64-unknown-linux-gnu
           os: ubuntu-latest
           rust: nightly-2024-05-17
@@ -27,10 +27,10 @@ jobs:
           rust: nightly-2024-05-17
         - target: i586-unknown-linux-gnu
           os: ubuntu-latest
-          rust: nightly
+          rust: nightly-2024-05-17
         - target: i686-unknown-linux-gnu
           os: ubuntu-latest
-          rust: nightly
+          rust: nightly-2024-05-17
         # MIPS targets disabled since they are dropped to tier 3.
         # See https://github.com/rust-lang/compiler-team/issues/648
         #- target: mips-unknown-linux-gnu
@@ -71,16 +71,16 @@ jobs:
           rust: nightly-2024-05-17
         - target: wasm32-unknown-unknown
           os: ubuntu-latest
-          rust: nightly
+          rust: nightly-2024-05-17
         - target: x86_64-unknown-linux-gnu
           os: ubuntu-latest
-          rust: nightly
+          rust: nightly-2024-05-17
         - target: x86_64-apple-darwin
           os: macos-latest
-          rust: nightly
+          rust: nightly-2024-05-17
         - target: i686-pc-windows-msvc
           os: windows-latest
-          rust: nightly
+          rust: nightly-2024-05-17
         - target: x86_64-pc-windows-msvc
           os: windows-latest
           rust: nightly-2024-05-17
@@ -140,7 +140,7 @@ jobs:
     # This acquires the most recent nightly with a clippy component.
     - name: Install nightly `clippy`
       run: |
-        rustup set profile minimal && rustup default "nightly-$(curl -s https://rust-lang.github.io/rustup-components-history/x86_64-unknown-linux-gnu/clippy)" && rustup component add clippy
+        rustup set profile minimal && rustup default nightly-2024-05-17 && rustup component add clippy
     - run: cargo clippy -- -D clippy::all
 
   success:
