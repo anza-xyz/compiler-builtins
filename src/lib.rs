@@ -82,7 +82,7 @@ pub mod x86_64;
 #[cfg_attr(not(feature = "mangled-names"), no_mangle)]
 #[linkage = "weak"]
 pub unsafe extern "C" fn abort() -> ! {
-    let syscall: extern "C" fn() -> ! = core::mem::transmute(1usize); // 1 is the code for "abort"
+    let syscall: extern "C" fn() -> ! = core::mem::transmute(3069975057u64); // murmur32 hash of "abort"
     syscall()
 }
 

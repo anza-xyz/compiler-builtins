@@ -219,24 +219,25 @@ mod syscalls {
 mod syscalls {
     pub(crate) fn sol_memcpy_(dest: *mut u8, src: *const u8, n: u64) {
         let syscall: extern "C" fn(*mut u8, *const u8, u64) =
-            unsafe { core::mem::transmute(3usize) }; // 3 is the code for "sol_memcpy_"
+            unsafe { core::mem::transmute(1904002211u64) }; // murmur32 hash of "sol_memcpy_"
         syscall(dest, src, n)
     }
 
     pub(crate) fn sol_memmove_(dest: *mut u8, src: *const u8, n: u64) {
         let syscall: extern "C" fn(*mut u8, *const u8, u64) =
-            unsafe { core::mem::transmute(4usize) }; // 4 is the code for "sol_memmove_"
+            unsafe { core::mem::transmute(1128493560u64) }; // murmur32 hash of "sol_memmove_"
         syscall(dest, src, n)
     }
 
     pub(crate) fn sol_memcmp_(dest: *const u8, src: *const u8, n: u64, result: *mut i32) {
         let syscall: extern "C" fn(*const u8, *const u8, u64, *mut i32) =
-            unsafe { core::mem::transmute(6usize) }; // 6 is the code for "sol_memcmp_"
+            unsafe { core::mem::transmute(1608310321u64) }; // murmur32 hash of "sol_memcmp_"
         syscall(dest, src, n, result)
     }
 
     pub(crate) fn sol_memset_(dest: *mut u8, c: u8, n: u64) {
-        let syscall: extern "C" fn(*mut u8, u8, u64) = unsafe { core::mem::transmute(5usize) }; // 5 is the code for "sol_memset_"
+        let syscall: extern "C" fn(*mut u8, u8, u64) =
+            unsafe { core::mem::transmute(930151202u64) }; // murmur32 hash of "sol_memset_"
         syscall(dest, c, n)
     }
 }
