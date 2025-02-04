@@ -629,12 +629,6 @@ mod c {
 
         if target_os == "solana" {
             cfg.define("__ELF__", None);
-            // Use the static-syscall target feature to detect if we're
-            // compiling for sbfv2, in which case set the corresponding clang
-            // cpu flag.
-            if target_feature.contains("static-syscalls") {
-                cfg.flag("-mcpu=sbfv2");
-            }
             // Remove the implementations that fail to build.
             // This list should shrink to zero
             sources.remove(&[
