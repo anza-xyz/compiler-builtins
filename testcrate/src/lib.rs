@@ -13,6 +13,7 @@
 //! Some floating point tests are disabled for specific architectures, because they do not have
 //! correct rounding.
 #![no_std]
+#![feature(isqrt)]
 #![cfg_attr(f128_enabled, feature(f128))]
 #![cfg_attr(f16_enabled, feature(f16))]
 
