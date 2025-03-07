@@ -9,6 +9,7 @@
 #![feature(linkage)]
 #![feature(naked_functions)]
 #![feature(repr_simd)]
+#![feature(isqrt)]
 #![cfg_attr(f16_enabled, feature(f16))]
 #![cfg_attr(f128_enabled, feature(f128))]
 #![no_builtins]

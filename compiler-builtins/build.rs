@@ -302,10 +302,7 @@ mod c {
     }
 
     /// Compile intrinsics from the compiler-rt C source code
-    pub fn compile(llvm_target: &[&str], target: &String) {
-        let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap();
-        let target_feature = env::var("CARGO_CFG_TARGET_FEATURE").unwrap_or_default();
-
+    pub fn compile(llvm_target: &[&str], target: &Target) {
         let mut consider_float_intrinsics = true;
         let cfg = &mut cc::Build::new();
 
@@ -613,7 +610,7 @@ mod c {
             sources.extend(&[("__emutls_get_address", "emutls.c")]);
         }
 
-        if target_os == "solana" {
+        if target.os == "solana" {
             cfg.define("__ELF__", None);
             // Remove the implementations that fail to build.
             // This list should shrink to zero
