@@ -23,8 +23,11 @@ default-features = false
 features = ["public-test-deps"]
 
 [dev-dependencies]
-criterion = { version = "0.5.1", default-features = false, features = ["cargo_bench_support"] }
 paste = "1.0.15"
+
+[target.'cfg(not(target_arch = "sbf"))'.dev-dependencies]
+criterion = { version = "0.5.1", default-features = false, features = ["cargo_bench_support"] }
+
 
 [target.'cfg(all(target_arch = "arm", not(any(target_env = "gnu", target_env = "musl")), target_os = "linux"))'.dev-dependencies]
 test = { git = "https://github.com/japaric/utest" }
@@ -47,7 +50,7 @@ no-sys-f16-f128-convert = []
 no-sys-f16 = []
 
 # Enable report generation without bringing in more dependencies by default
-benchmarking-reports = ["criterion/plotters", "criterion/html_reports"]
+# benchmarking-reports = ["criterion/plotters", "criterion/html_reports"]
 
 [[bench]]
 name = "float_add"
