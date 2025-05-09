@@ -30,16 +30,27 @@ if [ "${BUILD_ONLY:-}" = "1" ]; then
     echo "no tests to run for build-only targets"
 else
     test_builtins=(cargo test --package builtins-test --no-fail-fast --target "$target")
-    "${test_builtins[@]}"
+    if [[ ! "$target" =~ ^sbf && ! "$target" =~ ^sbpf- && ! "$target" =~ ^sbpfv3- ]]; then
+      # Not using release mode causes a stack overflow in SBPFv0
+      # There is a bug in SBPFv3 whereby we were not adding returns to -O0 code
+      "${test_builtins[@]}"
+      "${test_builtins[@]}" --features c
+      "${test_builtins[@]}" --features no-asm
+      "${test_builtins[@]}" --features no-f16-f128
+    fi
+
     "${test_builtins[@]}" --release
-    "${test_builtins[@]}" --features c
     "${test_builtins[@]}" --features c --release
-    "${test_builtins[@]}" --features no-asm
     "${test_builtins[@]}" --features no-asm --release
-    "${test_builtins[@]}" --features no-f16-f128
     "${test_builtins[@]}" --features no-f16-f128 --release
-    "${test_builtins[@]}" --benches
-    "${test_builtins[@]}" --benches --release
+
+   if [[ ! "$target" =~ ^sbf && ! "$target" =~ ^sbpf ]]; then
+      # Benches require criterion, which is not compatible with SBPF
+      "${test_builtins[@]}" --benches
+      "${test_builtins[@]}" --benches --release
+      "${test_builtins[@]}" --benches
+      "${test_builtins[@]}" --benches --release
+   fi
 
     if [ "${TEST_VERBATIM:-}" = "1" ]; then
         verb_path=$(cmd.exe //C echo \\\\?\\%cd%\\builtins-test\\target2)

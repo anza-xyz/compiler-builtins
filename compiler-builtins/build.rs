@@ -612,13 +612,6 @@ mod c {
 
         if target.os == "solana" {
             cfg.define("__ELF__", None);
-            // Remove the implementations that fail to build.
-            // This list should shrink to zero
-            sources.remove(&[
-                "__int_util", // Unsupported architecture error
-                "__mulvdi3",  // Unsupported signed division
-                "__mulvsi3",  // Unsupported signed division
-            ]);
         }
 
         // When compiling the C code we require the user to tell us where the

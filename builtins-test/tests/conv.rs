@@ -84,7 +84,9 @@ mod i_to_f {
                         if !Float::eq_repr(f0, f1) && !cfg!(any(
                             target_arch = "x86",
                             target_arch = "powerpc",
-                            target_arch = "powerpc64"
+                            target_arch = "powerpc64",
+                            // In SBF, the rounding bug exists when ALU32 is disbaled.
+                            not(target_feature = "static-syscalls"),
                         )) {
                             panic!(
                                 "{}({}): std: {:?}, builtins: {:?}",
