@@ -24,16 +24,26 @@ if [ "${NO_STD:-}" = "1" ]; then
     echo "nothing to do for no_std"
 else
     run="cargo test --manifest-path testcrate/Cargo.toml --no-fail-fast --target $target"
-    $run
+
+    if [[ ! "$target" =~ ^sbf && ! "$target" =~ ^sbpf- && ! "$target" =~ ^sbpfv3- ]]; then
+      # Not using release mode causes a stack overflow in SBPFv0
+      # There is a bug in SBPFv3 whereby we were not adding returns to -O0 code
+      $run
+      $run --features c
+      $run --features no-asm
+      $run --features no-f16-f128
+    fi
+
     $run --release
-    $run --features c
     $run --features c --release
-    $run --features no-asm
     $run --features no-asm --release
-    $run --features no-f16-f128
     $run --features no-f16-f128 --release
-    $run --benches
-    $run --benches --release
+
+    if [[ ! "$target" =~ ^sbf && ! "$target" =~ ^sbpf ]]; then
+      # Benches require criterion, which is not compatible with SBPF
+      $run --benches
+      $run --benches --release
+    fi
 fi
 
 if [ "${TEST_VERBATIM:-}" = "1" ]; then

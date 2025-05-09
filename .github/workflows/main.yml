@@ -70,6 +70,18 @@ jobs:
         - target: sbf-solana-solana
           os: ubuntu-latest
           rust: nightly-2024-11-01
+        - target: sbpf-solana-solana
+          os: ubuntu-latest
+          rust: nightly-2024-11-01
+        - target: sbpfv1-solana-solana
+          os: ubuntu-latest
+          rust: nightly-2024-11-01
+        - target: sbpfv2-solana-solana
+          os: ubuntu-latest
+          rust: nightly-2024-11-01
+        - target: sbpfv3-solana-solana
+          os: ubuntu-latest
+          rust: nightly-2024-11-01
         - target: thumbv6m-none-eabi
           os: ubuntu-latest
           rust: nightly-2024-11-01
@@ -115,7 +127,7 @@ jobs:
       run: rustup update ${{ matrix.rust }} --no-self-update && rustup default ${{ matrix.rust }}
       shell: bash
     - run: rustup target add ${{ matrix.target }}
-      if: matrix.target != 'sbf-solana-solana'
+      if: ${{ !startsWith(matrix.target, 'sbf') && !startsWith(matrix.target, 'sbpf') }}
     - run: rustup component add llvm-tools-preview
     - uses: Swatinem/rust-cache@v2
       with:

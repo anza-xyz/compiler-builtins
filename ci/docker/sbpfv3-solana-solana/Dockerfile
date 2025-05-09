@@ -19,7 +19,7 @@ RUN tar -xjf platform-tools-linux-x86_64.tar.bz2 --strip-components 1 -C /tmp/.c
 RUN rustup toolchain link solana /tmp/.cache/solana/v1.47/platform-tools/rust
 RUN cp -R ${HOME}/.rustup /tmp/
 
-ENV CARGO_TARGET_SBF_SOLANA_SOLANA_RUNNER="cargo-run-solana-tests --heap-size 104857600"
+ENV CARGO_TARGET_SBPFV3_SOLANA_SOLANA_RUNNER="cargo-run-solana-tests --heap-size 104857600"
 ENV LLVM_HOME="/tmp/.cache/solana/v1.47/platform-tools/llvm"
 ENV CC="/tmp/.cache/solana/v1.47/platform-tools/llvm/bin/clang"
 ENV RUSTUP_TOOLCHAIN="solana"
