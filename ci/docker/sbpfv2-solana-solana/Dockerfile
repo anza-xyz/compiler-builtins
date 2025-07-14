@@ -10,16 +10,16 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y -v -
 RUN cp ${HOME}/.cargo/bin/* /usr/local/bin/
 
 RUN cargo install --git https://github.com/anza-xyz/cargo-run-solana-tests.git \
-    --rev c5df324a62a5e03d2ff5f9efbdbf5a4e4182325e \
+    --rev 2ff58e81919c5c6580620f4b1f0e37777ef6787f \
     --bin cargo-run-solana-tests --root /usr/local
 
-RUN mkdir -p /tmp/.cache/solana/v1.47/platform-tools
-RUN curl -L -o platform-tools-linux-x86_64.tar.bz2 https://github.com/anza-xyz/platform-tools/releases/download/v1.47/platform-tools-linux-x86_64.tar.bz2
-RUN tar -xjf platform-tools-linux-x86_64.tar.bz2 --strip-components 1 -C /tmp/.cache/solana/v1.47/platform-tools
-RUN rustup toolchain link solana /tmp/.cache/solana/v1.47/platform-tools/rust
+RUN mkdir -p /tmp/.cache/solana/v1.50/platform-tools
+RUN curl -L -o platform-tools-linux-x86_64.tar.bz2 https://github.com/anza-xyz/platform-tools/releases/download/v1.50/platform-tools-linux-x86_64.tar.bz2
+RUN tar -xjf platform-tools-linux-x86_64.tar.bz2 --strip-components 1 -C /tmp/.cache/solana/v1.50/platform-tools
+RUN rustup toolchain link solana /tmp/.cache/solana/v1.50/platform-tools/rust
 RUN cp -R ${HOME}/.rustup /tmp/
 
 ENV CARGO_TARGET_SBPFV2_SOLANA_SOLANA_RUNNER="cargo-run-solana-tests --heap-size 104857600"
-ENV LLVM_HOME="/tmp/.cache/solana/v1.47/platform-tools/llvm"
-ENV CC="/tmp/.cache/solana/v1.47/platform-tools/llvm/bin/clang"
+ENV LLVM_HOME="/tmp/.cache/solana/v1.50/platform-tools/llvm"
+ENV CC="/tmp/.cache/solana/v1.50/platform-tools/llvm/bin/clang"
 ENV RUSTUP_TOOLCHAIN="solana"

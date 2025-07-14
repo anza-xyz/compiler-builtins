@@ -30,7 +30,7 @@ if [ "${BUILD_ONLY:-}" = "1" ]; then
     echo "no tests to run for build-only targets"
 else
     test_builtins=(cargo test --package builtins-test --no-fail-fast --target "$target")
-    if [[ ! "$target" =~ ^sbf && ! "$target" =~ ^sbpf- && ! "$target" =~ ^sbpfv3- ]]; then
+    if [[ ! "$target" =~ ^sbf && ! "$target" =~ ^sbpf- ]]; then
       # Not using release mode causes a stack overflow in SBPFv0
       # There is a bug in SBPFv3 whereby we were not adding returns to -O0 code
       "${test_builtins[@]}"
