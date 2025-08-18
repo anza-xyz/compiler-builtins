@@ -94,10 +94,18 @@ jobs:
           test_verbatim: 1
         - target: i686-pc-windows-gnu
           os: windows-2025
-          channel: nightly-i686-gnu
+          channel: nightly-2025-04-29-i686-gnu
         - target: x86_64-pc-windows-gnu
           os: windows-2025
-          channel: nightly-x86_64-gnu
+          channel: nightly-2025-04-29-x86_64-gnu
+        - target: sbpf-solana-solana
+          os: ubuntu-24.04
+        - target: sbpfv1-solana-solana
+          os: ubuntu-24.04
+        - target: sbpfv2-solana-solana
+          os: ubuntu-24.04
+        - target: sbpfv3-solana-solana
+          os: ubuntu-24.04
     runs-on: ${{ matrix.os }}
     needs: [calculate_vars]
     env:
@@ -111,14 +119,22 @@ jobs:
       with:
         submodules: true
     - name: Install Rust (rustup)
+      if: ${{ !startsWith(matrix.target, 'sbpf') }}
       shell: bash
       run: |
-        channel="nightly"
+        channel="nightly-2025-04-29"
         # Account for channels that have required components (MinGW)
         [ -n "${{ matrix.channel }}" ] && channel="${{ matrix.channel }}"
         rustup update "$channel" --no-self-update
         rustup default "$channel"
         rustup target add "${{ matrix.target }}"
+    - name: Install Rust (rustup)
+      if: ${{ startsWith(matrix.target, 'sbpf') }}
+      shell: bash
+      run: |
+        channel="nightly-2025-04-29"
+        rustup update "$channel" --no-self-update
+        rustup default "$channel"
     - uses: taiki-e/install-action@nextest
     - uses: Swatinem/rust-cache@v2
       with:
@@ -188,7 +204,7 @@ jobs:
     - name: Install nightly `clippy`
       run: |
         rustup set profile minimal
-        rustup default nightly
+        rustup default nightly-2025-04-29
         rustup component add clippy
     - uses: Swatinem/rust-cache@v2
     - run: cargo clippy --workspace --all-targets
@@ -259,7 +275,7 @@ jobs:
       with:
         submodules: true
     - name: Install Rust (rustup)
-      run: rustup update nightly --no-self-update && rustup default nightly
+      run: rustup update nightly-2025-04-29 --no-self-update && rustup default nightly-2025-04-29
       shell: bash
     - run: rustup component add miri
     - run: cargo miri setup

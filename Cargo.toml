@@ -49,6 +49,3 @@ lto = "fat"
 [profile.bench]
 # Required for iai-callgrind
 debug = true
-
-[lints.rust]
-unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_family, values("solana"))', 'cfg(target_feature, values("static-syscalls"))', 'cfg(target_os, values("solana"))'] }

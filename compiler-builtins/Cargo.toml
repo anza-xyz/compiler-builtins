@@ -61,4 +61,11 @@ unstable-public-internals = []
 
 [lints.rust]
 # The cygwin config can be dropped after our benchmark toolchain is bumped
-unexpected_cfgs = { level = "warn", check-cfg = ['cfg(bootstrap)', 'cfg(target_os, values("cygwin"))'] }
+unexpected_cfgs = { level = "warn", check-cfg = [
+    'cfg(bootstrap)',
+    'cfg(target_os, values("cygwin"))',
+    'cfg(target_family, values("solana"))',
+    'cfg(target_feature, values("static-syscalls"))',
+    'cfg(target_os, values("solana"))'
+] }
+
