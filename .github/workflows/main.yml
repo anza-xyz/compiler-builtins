@@ -10,78 +10,78 @@ jobs:
         include:
         - target: aarch64-unknown-linux-gnu
           os: ubuntu-latest
-          rust: nightly
+          rust: nightly-2023-11-10
         - target: arm-unknown-linux-gnueabi
           os: ubuntu-latest
-          rust: nightly
+          rust: nightly-2023-11-10
         - target: arm-unknown-linux-gnueabihf
           os: ubuntu-latest
-          rust: nightly
+          rust: nightly-2023-11-10
         - target: i586-unknown-linux-gnu
           os: ubuntu-latest
-          rust: nightly
+          rust: nightly-2023-11-10
         - target: i686-unknown-linux-gnu
           os: ubuntu-latest
-          rust: nightly
+          rust: nightly-2023-11-10
         # MIPS targets disabled since they are dropped to tier 3.
         # See https://github.com/rust-lang/compiler-team/issues/648
         #- target: mips-unknown-linux-gnu
         #  os: ubuntu-latest
-        #  rust: nightly
+        #  rust: nightly-2023-11-10
         #- target: mips64-unknown-linux-gnuabi64
         #  os: ubuntu-latest
-        #  rust: nightly
+        #  rust: nightly-2023-11-10
         #- target: mips64el-unknown-linux-gnuabi64
         #  os: ubuntu-latest
-        #  rust: nightly
+        #  rust: nightly-2023-11-10
         #- target: mipsel-unknown-linux-gnu
         #  os: ubuntu-latest
-        #  rust: nightly
+        #  rust: nightly-2023-11-10
         - target: powerpc-unknown-linux-gnu
           os: ubuntu-latest
-          rust: nightly
+          rust: nightly-2023-11-10
         - target: powerpc64-unknown-linux-gnu
           os: ubuntu-latest
-          rust: nightly
+          rust: nightly-2023-11-10
         - target: powerpc64le-unknown-linux-gnu
           os: ubuntu-latest
-          rust: nightly
+          rust: nightly-2023-11-10
         - target: sbf-solana-solana
           os: ubuntu-latest
-          rust: nightly
+          rust: nightly-2023-11-10
         - target: thumbv6m-none-eabi
           os: ubuntu-latest
-          rust: nightly
+          rust: nightly-2023-11-10
         - target: thumbv7em-none-eabi
           os: ubuntu-latest
-          rust: nightly
+          rust: nightly-2023-11-10
         - target: thumbv7em-none-eabihf
           os: ubuntu-latest
-          rust: nightly
+          rust: nightly-2023-11-10
         - target: thumbv7m-none-eabi
           os: ubuntu-latest
-          rust: nightly
+          rust: nightly-2023-11-10
         - target: wasm32-unknown-unknown
           os: ubuntu-latest
-          rust: nightly
+          rust: nightly-2023-11-10
         - target: x86_64-unknown-linux-gnu
           os: ubuntu-latest
-          rust: nightly
+          rust: nightly-2023-11-10
         - target: x86_64-apple-darwin
           os: macos-latest
-          rust: nightly
+          rust: nightly-2023-11-10
         - target: i686-pc-windows-msvc
           os: windows-latest
-          rust: nightly
+          rust: nightly-2023-11-10
         - target: x86_64-pc-windows-msvc
           os: windows-latest
-          rust: nightly
+          rust: nightly-2023-11-10
         - target: i686-pc-windows-gnu
           os: windows-latest
-          rust: nightly-i686-gnu
+          rust: nightly-2023-11-10-i686-gnu
         - target: x86_64-pc-windows-gnu
           os: windows-latest
-          rust: nightly-x86_64-gnu
+          rust: nightly-2023-11-10-x86_64-gnu
     steps:
     - uses: actions/checkout@v1
       with:
@@ -130,5 +130,5 @@ jobs:
     # This acquires the most recent nightly with a clippy component.
     - name: Install nightly `clippy`
       run: |
-        rustup set profile minimal && rustup default "nightly-$(curl -s https://rust-lang.github.io/rustup-components-history/x86_64-unknown-linux-gnu/clippy)" && rustup component add clippy
+        rustup set profile minimal && rustup default "nightly-2023-11-10" && rustup component add clippy
     - run: cargo clippy -- -D clippy::all
